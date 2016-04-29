@@ -2,6 +2,7 @@
 
 const lo_isEqual = require('lodash.isequal');
 const lo_cloneDeep = require('lodash.clonedeep');
+const lo_findIndex = require('lodash.findindex');
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -57,8 +58,18 @@ class Preferences extends React.Component {
       const prefItems = msg;
       this.setState({ prefItems });
 
-      if (prefItems.length > 0)
-        this.selectPref(prefItems[0].id);
+      if (prefItems.length <= 0)
+        return;
+
+      let activeIndex = 0;
+      // Parse location.hash first
+      if (location.hash.length > 0) {
+        const selectedPrefId = location.hash.substring(1);
+        activeIndex = lo_findIndex(prefItems, x => x.id === selectedPrefId);
+        if (activeIndex < 0)
+          activeIndex = 0;
+      }
+      this.selectPref(prefItems[activeIndex].id);
     });
     rpc.on('on-get-preferences', (evt, msg) => {
       this.setState({

@@ -28,7 +28,7 @@ const appProxy = {
   close: (dontRestoreFocus) => proxyFunc('app', 'close', dontRestoreFocus),
   setInput: (text) => proxyFunc('app', 'setInput', text),
   setQuery: (query) => proxyFunc('app', 'setQuery', query),
-  openPreferences: () => proxyFunc('app', 'openPreferences')
+  openPreferences: (prefId) => proxyFunc('app', 'openPreferences', prefId)
 };
 
 const toastProxy = {
@@ -82,11 +82,11 @@ function initialize(initialGlobalPref) {
   co(function* () {
     handleExceptions();
     globalPrefObj.update(initialGlobalPref);
-
     globalProxyAgent.initialize(globalPrefObj);
 
     plugins = require('./plugins')(workerContext);
     yield* plugins.initialize();
+
     send('ready');
   }).catch((e) => {
     const err = e.stack || e;

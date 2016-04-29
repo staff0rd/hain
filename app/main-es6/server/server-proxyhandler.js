@@ -20,7 +20,7 @@ proxyHandlers.app = {
   close: (dontRestoreFocus) => app.close(dontRestoreFocus),
   setInput: (text) => rpc.send('mainwindow', 'set-query', text), // Deprecated
   setQuery: (query) => rpc.send('mainwindow', 'set-query', query),
-  openPreferences: () => app.openPreferences()
+  openPreferences: (prefId) => app.openPreferences(prefId)
 };
 
 proxyHandlers.toast = {

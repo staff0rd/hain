@@ -86,8 +86,8 @@ function quit() {
   electronApp.quit();
 }
 
-function openPreferences() {
-  prefWindow.show();
+function openPreferences(prefId) {
+  prefWindow.show(prefId);
 }
 
 module.exports = {

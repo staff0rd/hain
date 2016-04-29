@@ -7,15 +7,26 @@ const windowUtil = require('./windowutil');
 
 let browserWindow = null;
 
-function show() {
-  if (browserWindow !== null)
+function generateUrl(prefId) {
+  const baseUrl = `file://${__dirname}/../../../dist/preferences.html`;
+  if (prefId)
+    return `${baseUrl}#${prefId}`;
+  return baseUrl;
+}
+
+function show(prefId) {
+  const url = generateUrl(prefId);
+  if (browserWindow !== null) {
+    browserWindow.loadURL(url);
     return;
+  }
+
   browserWindow = new BrowserWindow({
     width: 800,
     height: 650,
     show: false
   });
-  browserWindow.loadURL(`file://${__dirname}/../../../dist/preferences.html`);
+  browserWindow.loadURL(url);
   browserWindow.on('close', () => {
     browserWindow = null;
 

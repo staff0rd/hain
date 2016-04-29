@@ -18,6 +18,7 @@
     "lodash.clamp": "^4.0.2",
     "lodash.clonedeep": "^4.3.2",
     "lodash.find": "^4.3.0",
+    "lodash.findindex": "^4.3.0",
     "lodash.first": "^3.0.0",
     "lodash.get": "^4.2.1",
     "lodash.has": "^4.3.1",
