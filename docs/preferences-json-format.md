@@ -58,9 +58,34 @@ module.exports = (pluginContext) => {
 ```
 See [PreferencesObject](preferences-object.md)
 
+## Non-Standard Options
+
+* **errorMessages**  
+  You can customize displaying error messages to what you want  
+  
+  **Example**
+  ```json
+  {
+    "type": "string",
+    "minLength": 3,
+    "errorMessages": "This is error!"
+  }
+  ```
+  or
+  ```json
+  {
+    "type": "string",
+    "minLength": 3,
+    "maxLength": 5,
+    "errorMessages": {
+      "minLength": "This is Error for minLength",
+      "maxLength": "This is Error for maxLength"
+    }
+  }
+  ```
+
 ## Limitations  
 Currently, Type of root object must be `object`.
-
 
 
 ## Related Docs

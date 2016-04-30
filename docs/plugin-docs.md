@@ -1,6 +1,6 @@
 # Plugin Documentation (working)
 
-Current API Version: `hain-0.1.0`
+Current API Version: `hain-0.3.0`
 
 ## Examples
 
@@ -37,7 +37,6 @@ Current API Version: `hain-0.1.0`
 ## Guides
 
 * [Plugin Directories](plugin-directories.md)
-* Run your plugins
 * [Share your plugins](share-your-plugins.md)
 
 ## API Reference
@@ -56,6 +55,5 @@ Current API Version: `hain-0.1.0`
 * [Icon URL Format](icon-url-format.md)
 * [Text Format](text-format.md)
 
-## Very Important Notice
-
-* You should avoid to use `console.log` in your plugin or plugin process would be break. Instead, you can use `PluginContext.Logger`. (for unknown reason)
+## Known Issues
+- You should avoid to use `console.log` in your plugin or plugin process would be break. Instead, you can use `PluginContext.Logger`. (for unknown reason)

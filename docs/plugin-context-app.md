@@ -7,19 +7,25 @@ App object has following functions:
 * **quit()**
 
   Quit the app
-  
+
+* **open(query)**
+  - `query` String - Query text (optional, default is `undefined`)
+
+  Open the window with new Query
+
 * **close(dontRestoreFocus)**
   - `dontRestoreFocus` Boolean - if true, Hain doesn't focus previous focused window (optional, default is `false`)
 
-  Close the open window
+  Close the window
   
-* **setInput(text)**
-  - `text` String - New input(query) (**required**)
+* **setQuery(query)**
+  - `query` String - Query text (**required**)
 
-  Change user input (similar with `redirect` property in `SearchResult`)
+  Change query (similar with `redirect` property in `SearchResult`)
   
-* **openPreferences()**
-  
+* **openPreferences(prefId)**
+  - `prefId` String - Opening Preferences Id (PackageName for Plugin) (optional, default is `undefined`)
+
   Open preferences window
 
 **Example**

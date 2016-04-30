@@ -16,6 +16,7 @@ PluginContext is a object which has following properties:
 * `toast` [Toast](plugin-context-toast.md) - Provides toast functionality
 * `shell` [Shell](plugin-context-shell.md) - Provides electron's shell commands
 * `logger` [Logger](plugin-context-logger.md) - Provides logging functionality
+* `localStorage` [node-persist Object](https://github.com/simonlast/node-persist) - Provides a storage for each plugins
 
 **Preference Objects:**
 * `globalPreferences` [PreferencesObject](preferences-object.md) - Contains Global preferences
