@@ -39,8 +39,8 @@ class AppContainer extends React.Component {
   constructor() {
     super();
 
+    this.isLoaded = false;
     this.state = {
-      isLoaded: false,
       query: '',
       results: [],
       selectionIndex: 0,
@@ -74,10 +74,12 @@ class AppContainer extends React.Component {
     this.refs.query.focus();
     rpc.connect();
     rpc.on('on-load', (evt, msg) => {
-      this.setState({ isLoaded: true });
+      this.isLoaded = true;
+      this.setQuery('', true);
     });
     rpc.on('on-reloading', (evt, msg) => {
-      this.setState({ isLoaded: false });
+      this.isLoaded = false;
+      this.forceUpdate();
     });
     rpc.on('on-toast', (evt, msg) => {
       const { message, duration } = msg;
@@ -135,7 +137,6 @@ class AppContainer extends React.Component {
       this.setState({ previewHtml: html });
     });
     setInterval(this.processToast.bind(this), 200);
-    this.setQuery('');
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -341,7 +342,7 @@ class AppContainer extends React.Component {
 
     // Show message if there is no results yet
     if (list.length === 0) {
-      const isLoading = !this.state.isLoaded;
+      const isLoading = !this.isLoaded;
       const _text = isLoading ? 'Loading' : 'Sorry, No Results';
       const _icon = isLoading ? 'fa fa-spinner fa-spin' : 'fa fa-heart';
       list.push(
