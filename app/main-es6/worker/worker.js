@@ -25,6 +25,7 @@ function ipcPipe(target, channel, msg) {
 const appProxy = {
   restart: () => proxyFunc('app', 'restart'),
   quit: () => proxyFunc('app', 'quit'),
+  open: (query) => proxyFunc('app', 'open', query),
   close: (dontRestoreFocus) => proxyFunc('app', 'close', dontRestoreFocus),
   setInput: (text) => proxyFunc('app', 'setInput', text),
   setQuery: (query) => proxyFunc('app', 'setQuery', query),

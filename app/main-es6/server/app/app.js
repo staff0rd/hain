@@ -60,6 +60,12 @@ function launch() {
   iconProtocol.register();
 }
 
+function open(query) {
+  mainWindow.showWindowOnCenter();
+  if (query !== undefined)
+    mainWindow.setQuery(query);
+}
+
 function close(dontRestoreFocus) {
   mainWindow.hideAndRefreshWindow(dontRestoreFocus);
 }
@@ -92,6 +98,7 @@ function openPreferences(prefId) {
 
 module.exports = {
   launch,
+  open,
   close,
   restart,
   quit,
