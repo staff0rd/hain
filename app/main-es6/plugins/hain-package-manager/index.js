@@ -198,19 +198,23 @@ module.exports = (context) => {
     return ret;
   }
 
-  function resetInput() {
-    app.setInput(`${PREFIX} `);
+  function resetQuery() {
+    app.setQuery(`${PREFIX} `);
   }
 
   function execute(id, payload) {
     const funcs = {
       'install': () => {
         installPackage(id);
-        resetInput();
+        resetQuery();
       },
       'update': () => {
+        updatePackage(id);
+        resetQuery();
+      },
+      'uninstall': () => {
         uninstallPackage(id);
-        resetInput();
+        resetQuery();
       },
       'list': () => {
         const pkgInfo = getPackageInfo(id);
