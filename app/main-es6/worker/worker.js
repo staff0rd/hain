@@ -29,7 +29,8 @@ const appProxy = {
   close: (dontRestoreFocus) => proxyFunc('app', 'close', dontRestoreFocus),
   setInput: (text) => proxyFunc('app', 'setInput', text),
   setQuery: (query) => proxyFunc('app', 'setQuery', query),
-  openPreferences: (prefId) => proxyFunc('app', 'openPreferences', prefId)
+  openPreferences: (prefId) => proxyFunc('app', 'openPreferences', prefId),
+  reloadPlugins: () => proxyFunc('app', 'reloadPlugins')
 };
 
 const toastProxy = {

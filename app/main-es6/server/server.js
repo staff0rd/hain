@@ -10,10 +10,11 @@ const electronApp = require('electron').app;
 
 const rpc = require('./rpc-server');
 const proxyHandler = require('./server-proxyhandler');
-const app = require('./app/app');
 const pref = require('./pref');
 const asyncutil = require('../utils/asyncutil');
+const toast = require('./toast');
 
+let app = null;
 let workerProcess = null;
 let isPluginsReady = false;
 
@@ -44,6 +45,18 @@ function handleWorkerMessage(msg) {
 const _preMsgQueue = [];
 let _readyToSendmsg = false;
 
+function reloadWorker() {
+  isPluginsReady = false;
+  _readyToSendmsg = false;
+
+  if (workerProcess !== null) {
+    workerProcess.kill();
+    workerProcess = null;
+  }
+  rpc.send('mainwindow', 'on-reloading');
+  loadWorker();
+}
+
 function waitForSendmsgReady() {
   asyncutil.runWhen(() => (workerProcess !== null && workerProcess.connected), () => {
     _readyToSendmsg = true;
@@ -62,7 +75,7 @@ function sendmsg(type, payload) {
   workerProcess.send({ type, payload });
 }
 
-function initialize() {
+function loadWorker() {
   const workerPath = path.join(__dirname, '../worker/worker.js');
   if (!fs.existsSync(workerPath))
     throw new Error('can\'t execute plugin process');
@@ -77,6 +90,16 @@ function initialize() {
   const initialGlobalPref = pref.get();
   sendmsg('initialize', { initialGlobalPref });
   waitForSendmsgReady();
+  asyncutil.runWhen(() => isPluginsReady, () => {
+    rpc.send('mainwindow', 'on-load');
+  });
+}
+
+function initialize(_app) {
+  app = _app;
+
+  loadWorker();
+  proxyHandler.initialize(_app);
 
   electronApp.on('quit', () => {
     try {
@@ -176,5 +199,6 @@ rpc.define('close', function* () {
 module.exports = {
   initialize,
   commitPreferences,
+  reloadWorker,
   get isLoaded() { return (workerProcess !== null && workerProcess.connected && isPluginsReady); }
 };

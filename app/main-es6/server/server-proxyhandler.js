@@ -1,12 +1,17 @@
 'use strict';
 
 const shell = require('electron').shell;
-const app = require('./app/app');
 const rpc = require('./rpc-server');
 const toast = require('./toast');
 const clientLogger = require('./client-logger');
 
 const proxyHandlers = {};
+
+let app = null;
+
+function initialize(_app) {
+  app = _app;
+}
 
 function handle(service, func, args) {
   const handler = proxyHandlers[service];
@@ -21,7 +26,8 @@ proxyHandlers.app = {
   close: (dontRestoreFocus) => app.close(dontRestoreFocus),
   setInput: (text) => rpc.send('mainwindow', 'set-query', text), // Deprecated
   setQuery: (query) => rpc.send('mainwindow', 'set-query', query),
-  openPreferences: (prefId) => app.openPreferences(prefId)
+  openPreferences: (prefId) => app.openPreferences(prefId),
+  reloadPlugins: () => app.reloadPlugins()
 };
 
 proxyHandlers.toast = {
@@ -41,4 +47,4 @@ proxyHandlers.logger = {
   log: (msg) => clientLogger.log(msg)
 };
 
-module.exports = { handle };
+module.exports = { initialize, handle };

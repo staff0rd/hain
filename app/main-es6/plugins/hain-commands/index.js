@@ -3,7 +3,7 @@
 const pkg = require('../../../package.json');
 const checkForUpdate = require('./check-update');
 
-const COMMANDS = ['/restart', '/quit', '/about', '/preferences', '/update'];
+const COMMANDS = ['/reload', '/restart', '/quit', '/about', '/preferences', '/update'];
 const NAME = 'hain-commands';
 
 module.exports = (context) => {
@@ -53,6 +53,7 @@ module.exports = (context) => {
   function search(query, res) {
     const query_lower = query.toLowerCase();
     const basicCommandResults = {
+      '/reload': 'Reload Plugins',
       '/restart': 'Restart Hain',
       '/about': `Hain v${pkg.version} by Heejin Lee &lt;monster@teamappetizer.com&gt;`,
       '/quit': 'Quit Hain',
@@ -76,15 +77,18 @@ module.exports = (context) => {
 
   function execute(id, payload) {
     const commands = {
+      '/reload': () => {
+        app.reloadPlugins();
+      },
       '/restart': () => {
         toast.enqueue('Hain will be restarted, it will takes seconds');
         setTimeout(() => app.restart(), 1000);
-        app.setInput('');
+        app.setQuery('');
       },
       '/quit': () => app.quit(),
       '/about': () => {
         toast.enqueue('Thank you for using Hain');
-        app.setInput('');
+        app.setQuery('');
       },
       '/preferences': () => {
         app.openPreferences();

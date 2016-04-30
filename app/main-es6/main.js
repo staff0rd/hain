@@ -21,8 +21,9 @@
   });
 
   co(function* () {
-    require('./server/app/app').launch();
-    require('./server/server').initialize();
+    const app = require('./server/app/app');
+    app.launch();
+    require('./server/server').initialize(app);
     require('./server/rpc-server').startProcessingQueue();
   }).catch((err) => {
     dialog.showErrorBox('Hain', `Unhandled Error: ${err.stack || err}`);

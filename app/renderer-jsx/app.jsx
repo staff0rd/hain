@@ -40,6 +40,7 @@ class AppContainer extends React.Component {
     super();
 
     this.state = {
+      isLoaded: false,
       query: '',
       results: [],
       selectionIndex: 0,
@@ -72,6 +73,12 @@ class AppContainer extends React.Component {
   componentDidMount() {
     this.refs.query.focus();
     rpc.connect();
+    rpc.on('on-load', (evt, msg) => {
+      this.setState({ isLoaded: true });
+    });
+    rpc.on('on-reloading', (evt, msg) => {
+      this.setState({ isLoaded: false });
+    });
     rpc.on('on-toast', (evt, msg) => {
       const { message, duration } = msg;
       this.toastQueue.push({ message, duration });
@@ -332,12 +339,15 @@ class AppContainer extends React.Component {
       );
     }
 
-    // nothing yet
+    // Show message if there is no results yet
     if (list.length === 0) {
+      const isLoading = !this.state.isLoaded;
+      const _text = isLoading ? 'Loading' : 'Sorry, No Results';
+      const _icon = isLoading ? 'fa fa-spinner fa-spin' : 'fa fa-heart';
       list.push(
-        <ListItem primaryText="Sorry, No Results"
+        <ListItem primaryText={_text}
                   secondaryText="It may takes some time to show results"
-                  leftAvatar={<Avatar icon={<FontIcon className="fa fa-heart" />} />} />
+                  leftAvatar={<Avatar icon={<FontIcon className={_icon} />} />} />
       );
     }
 

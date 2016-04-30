@@ -203,26 +203,29 @@ module.exports = (context) => {
   }
 
   function execute(id, payload) {
-    if (payload === 'install') {
-      installPackage(id);
-      resetInput();
-    } else if (payload === 'update') {
-      updatePackage(id);
-      resetInput();
-    } else if (payload === 'uninstall') {
-      uninstallPackage(id);
-      resetInput();
-    } else if (payload === 'list') {
-      const pkgInfo = getPackageInfo(id);
-      if (pkgInfo.homepage)
-        shell.openExternal(pkgInfo.homepage);
-    }
+    const funcs = {
+      'install': () => {
+        installPackage(id);
+        resetInput();
+      },
+      'update': () => {
+        uninstallPackage(id);
+        resetInput();
+      },
+      'list': () => {
+        const pkgInfo = getPackageInfo(id);
+        if (pkgInfo.homepage)
+          shell.openExternal(pkgInfo.homepage);
+      }
+    };
+    const func = funcs[payload];
+    func();
   }
 
   function uninstallPackage(packageName) {
     try {
       pm.removePackage(packageName);
-      toast.enqueue(`${packageName} has uninstalled, <b>Restart</b> Hain to take effect`, 3000);
+      toast.enqueue(`${packageName} has uninstalled, Reload plugins to take effect`, 3000);
     } catch (e) {
       toast.enqueue(e.toString());
     }
@@ -234,7 +237,7 @@ module.exports = (context) => {
       currentStatus = `Installing <b>${packageName}</b>`;
       try {
         yield pm.installPackage(packageName, 'latest');
-        toast.enqueue(`${packageName} has installed, <b>Restart</b> Hain to take effect`, 3000);
+        toast.enqueue(`${packageName} has installed, Reload plugins to take effect`, 3000);
         logger.log(`${packageName} has pre-installed`);
       } catch (e) {
         toast.enqueue(e.toString());
@@ -253,7 +256,7 @@ module.exports = (context) => {
       try {
         pm.removePackage(packageName);
         yield pm.installPackage(packageName, 'latest');
-        toast.enqueue(`${packageName} has updated, <b>Restart</b> Hain to take effect`, 3000);
+        toast.enqueue(`${packageName} has updated, Reload plugins to take effect`, 3000);
         logger.log(`${packageName} has pre-installed (for update)`);
       } catch (e) {
         toast.enqueue(e.toString());

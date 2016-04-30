@@ -16,11 +16,11 @@ const prefWindow = require('./prefwindow');
 const iconProtocol = require('./iconprotocol');
 const toast = require('../toast');
 const shortcut = require('./shortcut');
+const server = require('../server');
 
 let _isRestarting = false;
 
 function launch() {
-  const server = require('../server');
   const tray = require('./tray');
 
   if (firstLaunch.isFirstLaunch)
@@ -96,6 +96,11 @@ function openPreferences(prefId) {
   prefWindow.show(prefId);
 }
 
+function reloadPlugins() {
+  server.reloadWorker();
+  mainWindow.setQuery('');
+}
+
 module.exports = {
   launch,
   open,
@@ -103,6 +108,7 @@ module.exports = {
   restart,
   quit,
   openPreferences,
+  reloadPlugins,
   get isRestarting() {
     return _isRestarting;
   }
