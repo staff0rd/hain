@@ -13,6 +13,7 @@
   const co = require('co');
   const dialog = require('electron').dialog;
   const electronApp = require('electron').app;
+  electronApp.commandLine.appendSwitch('js-flags', '--always-compact');
 
   const logger = require('./utils/logger');
   process.on('uncaughtException', (err) => {

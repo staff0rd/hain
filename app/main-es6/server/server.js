@@ -81,6 +81,7 @@ function loadWorker() {
     throw new Error('can\'t execute plugin process');
 
   workerProcess = cp.fork(workerPath, [], {
+    execArgv: ['--always-compact'],
     silent: true
   });
   workerProcess.on('message', (msg) => {
