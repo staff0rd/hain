@@ -5,58 +5,20 @@ const co = require('co');
 const logger = require('../utils/logger');
 const ObservableObject = require('../common/observable-object');
 const globalProxyAgent = require('./global-proxy-agent');
-
-function send(type, payload) {
-  process.send({ type, payload });
-}
-
-function proxyFunc(srcServiceName, funcName, args) {
-  send('proxy', {
-    service: srcServiceName,
-    func: funcName,
-    args
-  });
-}
+const procMsg = require('./proc-msg');
+const serverProxy = require('./server-proxy');
 
 function ipcPipe(target, channel, msg) {
-  send('on-ipc-pipe', { target, channel, msg });
+  procMsg.send('on-ipc-pipe', { target, channel, msg });
 }
-
-const appProxy = {
-  restart: () => proxyFunc('app', 'restart'),
-  quit: () => proxyFunc('app', 'quit'),
-  open: (query) => proxyFunc('app', 'open', query),
-  close: (dontRestoreFocus) => proxyFunc('app', 'close', dontRestoreFocus),
-  setInput: (text) => proxyFunc('app', 'setInput', text),
-  setQuery: (query) => proxyFunc('app', 'setQuery', query),
-  openPreferences: (prefId) => proxyFunc('app', 'openPreferences', prefId),
-  reloadPlugins: () => proxyFunc('app', 'reloadPlugins')
-};
-
-const toastProxy = {
-  enqueue: (message, duration) => proxyFunc('toast', 'enqueue', { message, duration })
-};
-
-const shellProxy = {
-  showItemInFolder: (fullPath) => proxyFunc('shell', 'showItemInFolder', fullPath),
-  openItem: (fullPath) => proxyFunc('shell', 'openItem', fullPath),
-  openExternal: (fullPath) => proxyFunc('shell', 'openExternal', fullPath)
-};
-
-const loggerProxy = {
-  log: (msg) => {
-    logger.log(msg);
-    proxyFunc('logger', 'log', msg);
-  }
-};
 
 const globalPrefObj = new ObservableObject({});
 
 const workerContext = {
-  app: appProxy,
-  toast: toastProxy,
-  shell: shellProxy,
-  logger: loggerProxy,
+  app: serverProxy.appProxy,
+  toast: serverProxy.toastProxy,
+  shell: serverProxy.shellProxy,
+  logger: serverProxy.loggerProxy,
   globalPreferences: globalPrefObj
 };
 
@@ -69,7 +31,7 @@ function handleProcessMessage(msg) {
     msgHandler(payload);
   } catch (e) {
     const err = e.stack || e;
-    send('error', err);
+    procMsg.send('error', err);
     logger.log(err);
   }
 }
@@ -89,10 +51,10 @@ function initialize(initialGlobalPref) {
     plugins = require('./plugins')(workerContext);
     yield* plugins.initialize();
 
-    send('ready');
+    procMsg.send('ready');
   }).catch((e) => {
     const err = e.stack || e;
-    send('error', err);
+    procMsg.send('error', err);
     logger.log(err);
   });
 }
@@ -128,12 +90,12 @@ const msgHandlers = {
   },
   getPluginPrefIds: (payload) => {
     const prefIds = plugins.getPrefIds();
-    send('on-get-plugin-pref-ids', prefIds);
+    procMsg.send('on-get-plugin-pref-ids', prefIds);
   },
   getPreferences: (payload) => {
     const prefId = payload;
     const pref = plugins.getPreferences(prefId);
-    send('on-get-preferences', pref);
+    procMsg.send('on-get-preferences', pref);
   },
   updatePreferences: (payload) => {
     const { prefId, model } = payload;
@@ -145,7 +107,7 @@ const msgHandlers = {
   resetPreferences: (payload) => {
     const prefId = payload;
     const pref = plugins.resetPreferences(prefId);
-    send('on-get-preferences', pref);
+    procMsg.send('on-get-preferences', pref);
   },
   updateGlobalPreferences: (payload) => {
     const model = payload;

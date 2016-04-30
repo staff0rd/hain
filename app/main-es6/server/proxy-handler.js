@@ -24,7 +24,6 @@ proxyHandlers.app = {
   quit: () => app.quit(),
   open: (query) => app.open(query),
   close: (dontRestoreFocus) => app.close(dontRestoreFocus),
-  setInput: (text) => rpc.send('mainwindow', 'set-query', text), // Deprecated
   setQuery: (query) => rpc.send('mainwindow', 'set-query', query),
   openPreferences: (prefId) => app.openPreferences(prefId),
   reloadPlugins: () => app.reloadPlugins()

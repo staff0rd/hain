@@ -9,7 +9,7 @@ const logger = require('../utils/logger');
 const electronApp = require('electron').app;
 
 const rpc = require('./rpc-server');
-const proxyHandler = require('./server-proxyhandler');
+const proxyHandler = require('./proxy-handler');
 const pref = require('./pref');
 const asyncutil = require('../utils/asyncutil');
 const toast = require('./toast');
