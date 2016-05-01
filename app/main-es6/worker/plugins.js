@@ -256,9 +256,7 @@ module.exports = (workerContext) => {
       try {
         plugin.search(_query, pluginResponse);
       } catch (e) {
-        logger.log(e);
-        if (e.stack)
-          logger.log(e.stack);
+        logger.log(e.stack || e);
       }
     }
 
