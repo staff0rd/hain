@@ -4,7 +4,7 @@
 
 An `alt+space` launcher for Windows, built with Electron.
 
-I always dreamed an alternative to Alfred on Windows, that is made with JavaScript.
+I always dreamed of an alternative to Alfred on Windows, that is made with JavaScript.
 so, I made it.
 
 <p align="center">
