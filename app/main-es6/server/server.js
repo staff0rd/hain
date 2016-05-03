@@ -193,6 +193,11 @@ rpc.on('renderPreview', (evt, msg) => {
   sendmsg('renderPreview', { ticket, pluginId, id, payload });
 });
 
+rpc.on('buttonAction', (evt, msg) => {
+  const { pluginId, id, payload } = msg;
+  sendmsg('buttonAction', { pluginId, id, payload });
+});
+
 rpc.define('close', function* () {
   app.close();
 });
