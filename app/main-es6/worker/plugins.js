@@ -293,6 +293,19 @@ module.exports = (workerContext) => {
     }
   }
 
+  function buttonAction(pluginId, id, payload) {
+    if (plugins[pluginId] === undefined)
+      return;
+    const buttonActionFunc = plugins[pluginId].buttonAction;
+    if (buttonActionFunc === undefined)
+      return;
+    try {
+      buttonActionFunc(id, payload);
+    } catch (e) {
+      logger.log(e.stack || e);
+    }
+  }
+
   function getPrefIds() {
     return pluginPrefIds;
   }
@@ -336,6 +349,7 @@ module.exports = (workerContext) => {
     searchAll,
     execute,
     renderPreview,
+    buttonAction,
     getPrefIds,
     getPreferences,
     updatePreferences,
