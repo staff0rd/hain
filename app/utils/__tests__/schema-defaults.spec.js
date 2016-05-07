@@ -27,6 +27,14 @@ describe('schema-defaults.js', () => {
       expect(defaults({ default: objVal })).toBe(objVal);
     });
 
+    it('should return first enum value if enum has provided', () => {
+      const schema_str = {
+        type: 'string',
+        enum: ['enum0', 'enum1']
+      };
+      expect(defaults(schema_str)).toBe(schema_str.enum[0]);
+    });
+
     it('should return 0 if integer type has provided', () => {
       const schema = {
         type: 'integer'

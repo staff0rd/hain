@@ -39,7 +39,7 @@ class ArrayComponent extends React.Component {
     }
 
     const childSchema = schema.items;
-    const ChildComponent = componentSelector.select(childSchema.type);
+    const ChildComponent = componentSelector.select(childSchema);
     if (ChildComponent === undefined)
       return (<div>Error</div>);
 
