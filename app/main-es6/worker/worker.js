@@ -88,6 +88,10 @@ const msgHandlers = {
     };
     plugins.renderPreview(pluginId, id, payload, render);
   },
+  buttonAction: (_payload) => {
+    const { pluginId, id, payload } = _payload;
+    plugins.buttonAction(pluginId, id, payload);
+  },
   getPluginPrefIds: (payload) => {
     const prefIds = plugins.getPrefIds();
     procMsg.send('on-get-plugin-pref-ids', prefIds);
