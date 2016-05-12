@@ -132,7 +132,7 @@ module.exports = (context) => {
     if (command === 'install') {
       if (availablePackages.length <= 0) {
         return {
-          title: 'Sorry, fetching available packages...',
+          title: 'Please wait, fetching available packages...',
           desc: NAME,
           icon: '#fa fa-spinner fa-spin'
         };
