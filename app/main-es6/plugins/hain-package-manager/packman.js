@@ -29,7 +29,8 @@ class Packman {
     this.internalRepoDir = opts.internalRepo;
     this.tempDir = opts.tempDir;
     this.installDir = opts.installDir;
-    this.uninstallFile = opts.uninstallFile;
+    this.updateListFile = opts.updateListFile;
+    this.uninstallListFile = opts.uninstallListFile;
 
     this.packages = [];
     this.internalPackages = [];
@@ -100,12 +101,20 @@ class Packman {
     });
   }
 
-  removePackage(packageName) {
+  _uninstallPackage(targetListFile, packageName) {
     if (!this.hasPackage(packageName))
       throw `Can't find a package: ${packageName}`;
 
-    fs.appendFileSync(this.uninstallFile, `${packageName}\n`);
+    fs.appendFileSync(targetListFile, `${packageName}\n`);
     lo_remove(this.packages, x => x.name === packageName);
+  }
+
+  uninstallPackageForUpdate(packageName) {
+    this._uninstallPackage(this.updateListFile, packageName);
+  }
+
+  uninstallPackage(packageName) {
+    this._uninstallPackage(this.uninstallListFile, packageName);
   }
 
 }

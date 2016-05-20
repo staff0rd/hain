@@ -121,7 +121,8 @@ module.exports = (workerContext) => {
     DEV_PLUGIN_REPO: conf.DEV_PLUGIN_REPO,
     INTERNAL_PLUGIN_REPO: conf.INTERNAL_PLUGIN_REPO,
     __PLUGIN_PREINSTALL_DIR: conf.__PLUGIN_PREINSTALL_DIR,
-    __PLUGIN_PREUNINSTALL_FILE: conf.__PLUGIN_PREUNINSTALL_FILE,
+    __PLUGIN_UNINSTALL_LIST_FILE: conf.__PLUGIN_UNINSTALL_LIST_FILE,
+    __PLUGIN_UPDATE_LIST_FILE: conf.__PLUGIN_UPDATE_LIST_FILE,
     CURRENT_API_VERSION: conf.CURRENT_API_VERSION,
     COMPATIBLE_API_VERSIONS: conf.COMPATIBLE_API_VERSIONS,
     // Utilities
@@ -170,19 +171,25 @@ module.exports = (workerContext) => {
     logger.log('startup: end');
   }
 
-  function removeUninstalledPlugins() {
-    const listFile = conf.__PLUGIN_PREUNINSTALL_FILE;
+  function removeUninstalledPlugins(listFile, removeData) {
     if (!fs.existsSync(listFile))
       return;
 
     try {
       const contents = fs.readFileSync(listFile, { encoding: 'utf8' });
       const targetPlugins = contents.split('\n').filter((val) => (val && val.trim().length > 0));
-      const repoDir = conf.MAIN_PLUGIN_REPO;
 
       for (const packageName of targetPlugins) {
-        const packageDir = path.join(repoDir, packageName);
+        const packageDir = path.join(conf.MAIN_PLUGIN_REPO, packageName);
         fse.removeSync(packageDir);
+
+        if (removeData) {
+          const storageDir = path.join(conf.LOCAL_STORAGE_DIR, packageName);
+          const prefFile = path.join(conf.PLUGIN_PREF_DIR, packageName);
+          fse.removeSync(storageDir);
+          fse.removeSync(prefFile);
+        }
+
         logger.log(`${packageName} has uninstalled successfully`);
       }
       fse.removeSync(listFile);
@@ -211,7 +218,8 @@ module.exports = (workerContext) => {
   }
 
   function* initialize() {
-    removeUninstalledPlugins();
+    removeUninstalledPlugins(conf.__PLUGIN_UNINSTALL_LIST_FILE, true);
+    removeUninstalledPlugins(conf.__PLUGIN_UPDATE_LIST_FILE, false);
     yield movePreinstalledPlugins();
 
     const ret = pluginLoader.loadPlugins(generatePluginContext);

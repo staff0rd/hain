@@ -26,7 +26,8 @@ module.exports = (context) => {
     internalRepo: context.INTERNAL_PLUGIN_REPO,
     tempDir: path.resolve('./_temp'),
     installDir: context.__PLUGIN_PREINSTALL_DIR,
-    uninstallFile: context.__PLUGIN_PREUNINSTALL_FILE
+    uninstallListFile: context.__PLUGIN_UNINSTALL_LIST_FILE,
+    updateListFile: context.__PLUGIN_UPDATE_LIST_FILE
   };
   const pm = new Packman(packmanOpts);
   const toast = context.toast;
@@ -229,7 +230,7 @@ module.exports = (context) => {
 
   function uninstallPackage(packageName) {
     try {
-      pm.removePackage(packageName);
+      pm.uninstallPackage(packageName);
       toast.enqueue(`${packageName} has uninstalled, Reload plugins to take effect`, 3000);
     } catch (e) {
       toast.enqueue(e.toString());
@@ -259,7 +260,7 @@ module.exports = (context) => {
       logger.log(`Updating ${packageName}`);
       currentStatus = `Updating <b>${packageName}</b>`;
       try {
-        pm.removePackage(packageName);
+        pm.uninstallPackageForUpdate(packageName);
         yield pm.installPackage(packageName, 'latest');
         toast.enqueue(`${packageName} has updated, Reload plugins to take effect`, 3000);
         logger.log(`${packageName} has pre-installed (for update)`);
