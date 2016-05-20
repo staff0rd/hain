@@ -9,12 +9,14 @@ const packageControl = require('./package-control');
 const fileutil = require('../../utils/fileutil');
 const fs = require('fs');
 
-function _createPackegeInfo(name, data, internal) {
+const util = require('./util');
+
+function _createPackageInfo(name, data, internal) {
   return {
     name,
     version: data.version || 'none',
     desc: data.description || '',
-    author: data.author || '',
+    author: util.parseAuthor(data.author) || '',
     homepage: data.homepage || '',
     internal: !!internal
   };
@@ -44,7 +46,7 @@ class Packman {
         try {
           const fileContents = yield fileutil.readFile(packageJsonFile);
           const pkgJson = JSON.parse(fileContents.toString());
-          const pkgInfo = _createPackegeInfo(_packageDir, pkgJson);
+          const pkgInfo = _createPackageInfo(_packageDir, pkgJson);
           self.packages.push(pkgInfo);
         } catch (e) {
           console.log(e);
@@ -59,7 +61,7 @@ class Packman {
         try {
           const fileContents = yield fileutil.readFile(packageJsonFile);
           const pkgJson = JSON.parse(fileContents.toString());
-          const pkgInfo = _createPackegeInfo(_packageDir, pkgJson, true);
+          const pkgInfo = _createPackageInfo(_packageDir, pkgJson, true);
           self.internalPackages.push(pkgInfo);
         } catch (e) {
           console.log(e);
@@ -85,7 +87,7 @@ class Packman {
     return (this.getPackage(packageName) !== undefined);
   }
 
-  installPackage(packageName, versionRange, proxyAgent) {
+  installPackage(packageName, versionRange) {
     const self = this;
     return co(function* () {
       if (self.hasPackage(packageName))
@@ -94,7 +96,7 @@ class Packman {
       const saveDir = path.join(self.installDir, packageName);
       const data = yield packageControl.installPackage(packageName, versionRange, saveDir, self.tempDir);
 
-      self.packages.push(_createPackegeInfo(packageName, data));
+      self.packages.push(_createPackageInfo(packageName, data));
     });
   }
 

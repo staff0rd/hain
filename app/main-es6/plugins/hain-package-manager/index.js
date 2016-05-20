@@ -11,6 +11,7 @@ const semver = require('semver');
 
 const Packman = require('./packman');
 const searchClient = require('./search-client');
+const util = require('./util');
 
 const COMMANDS_RE = / (install|update|uninstall|list)(\s+([^\s]+))?/i;
 const NAME = 'hain-package-manager (experimental)';
@@ -99,7 +100,7 @@ module.exports = (context) => {
       payload: cmdType,
       title: `${customName || pkgInfo.name} ` +
              ` <span style='font-size: 9pt'>${pkgInfo.internal ? 'internal' : pkgInfo.version}` +
-             `${!pkgInfo.internal ? ` by <b>${pkgInfo.author}</b>` : ''}` +
+             `${!pkgInfo.internal ? ` by <b>${util.parseAuthor(pkgInfo.author)}</b>` : ''}` +
              `</span>`,
       desc: `${pkgInfo.desc}`,
       group
