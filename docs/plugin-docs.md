@@ -58,4 +58,4 @@ Current API Version: `hain-0.3.0`
 * [Text Format](text-format.md)
 
 ## Known Issues
-- You should avoid to use `console.log` in your plugin or plugin process would be break. Instead, you can use `PluginContext.Logger`. (for unknown reason)
+- You should avoid using `console.log` in your plugin or the plugin process will break. Instead, you should use `PluginContext.Logger`. (for unknown reason)
