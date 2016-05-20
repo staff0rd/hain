@@ -1,7 +1,6 @@
 'use strict';
 
-jest.unmock('../search-client');
-jest.unmock('../util');
+jest.mock('got');
 
 const mock_got = require('got');
 const searchClient = require('../search-client');

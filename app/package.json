@@ -5,6 +5,10 @@
   "main": "main-es6/main.js",
   "author": "Heejin Lee <monster@teamappetizer.com>",
   "license": "MIT",
+  "jest": {
+    "automock": false,
+    "testEnvironment": "node"
+  },
   "dependencies": {
     "application-config-path": "^0.1.0",
     "co": "^4.6.0",

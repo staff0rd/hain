@@ -1,7 +1,6 @@
-/* global jest, describe, it, expect */
 'use strict';
 
-const defaults = require.requireActual('../schema-defaults');
+const defaults = require('../schema-defaults');
 
 describe('schema-defaults.js', () => {
 
