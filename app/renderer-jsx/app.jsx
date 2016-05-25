@@ -7,6 +7,7 @@ const lo_map = require('lodash.map');
 const lo_reject = require('lodash.reject');
 const lo_clamp = require('lodash.clamp');
 const lo_isString = require('lodash.isstring');
+const lo_assign = require('lodash.assign');
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -19,7 +20,7 @@ const Ticket = require('./ticket');
 const searchTicket = new Ticket();
 const previewTicket = new Ticket();
 
-import { TextField, Avatar, SelectableContainerEnhance, List, ListItem, Subheader, FontIcon } from 'material-ui';
+import { TextField, Avatar, SelectableContainerEnhance, List, ListItem, Subheader, FontIcon, IconButton } from 'material-ui';
 import MuiThemeProvider from 'material-ui/lib/MuiThemeProvider';
 import getMuiTheme from 'material-ui/lib/styles/getMuiTheme';
 import { Notification } from 'react-notification';
@@ -314,6 +315,39 @@ class AppContainer extends React.Component {
     this.refs.query.focus();
   }
 
+  displayRightButton(i) {
+    const defaultConfig = {
+      className: 'fa fa-info',
+      color: '#009688',
+      hoverColor: '#00695c',
+      tooltip: ''
+    };
+    const result = this.state.results[i];
+    if (!result.button) {
+      return null;
+    }
+    const btnConfig = lo_assign({}, defaultConfig, result.button);
+    const fontIcon = <FontIcon
+      className={ btnConfig.className }
+      onClick={ this.handleRightButtonClick.bind(this, result) }
+      color={ btnConfig.color }
+      hoverColor={ btnConfig.hoverColor }>
+      </FontIcon>;
+    return <IconButton 
+      children={ fontIcon } 
+      tooltip={ btnConfig.tooltip } 
+      tooltipPosition="top-left"
+      style={{ fontSize: 20 }} />;
+  }
+
+  handleRightButtonClick(result, evt) {
+    evt.stopPropagation();
+    const pluginId = result.pluginId;
+    const id = result.id;
+    const payload = result.payload;
+    rpc.send('buttonAction', { pluginId, id, payload });
+  }
+
   parseIconUrl(iconUrl) {
     if (!lo_isString(iconUrl)) {
       return null;
@@ -335,6 +369,7 @@ class AppContainer extends React.Component {
     for (let i = 0; i < results.length; ++i) {
       const result = results[i];
       const avatar = this.parseIconUrl(result.icon);
+      const rightIcon = this.displayRightButton(i);
       if (result.group !== lastGroup) {
         const headerId = `header.${i}`;
         list.push(
@@ -357,6 +392,7 @@ class AppContainer extends React.Component {
           onClick={this.handleItemClick.bind(this, i)}
           onKeyDown={this.handleKeyDown.bind(this)}
           leftAvatar={avatar}
+          rightIconButton={rightIcon}
           />
       );
     }

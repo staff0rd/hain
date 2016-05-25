@@ -10,16 +10,18 @@ const PLUGIN_PREF_DIR = `${HAIN_USER_PATH}/prefs/plugins`;
 const APP_PREF_DIR = `${HAIN_USER_PATH}/prefs/app`;
 
 const __PLUGIN_PREINSTALL_DIR = path.resolve('./pre_install');
-const __PLUGIN_PREUNINSTALL_FILE = path.resolve('./pre_uninstall');
+const __PLUGIN_UNINSTALL_LIST_FILE = path.resolve('./pre_uninstall');
+const __PLUGIN_UPDATE_LIST_FILE = path.resolve('./pre_update');
 
 const INTERNAL_PLUGIN_REPO = path.join(__dirname, './plugins');
 const MAIN_PLUGIN_REPO = path.resolve(`${HAIN_USER_PATH}/plugins`);
 const DEV_PLUGIN_REPO = path.resolve(`${HAIN_USER_PATH}/devplugins`);
 
-const CURRENT_API_VERSION = `hain-${pkgJson.version}`;
+const CURRENT_API_VERSION = 'hain-0.4.0';
 const COMPATIBLE_API_VERSIONS = [
   'hain0',
   'hain-0.1.0',
+  'hain-0.3.0',
   CURRENT_API_VERSION
 ];
 
@@ -38,7 +40,8 @@ module.exports = {
   LOCAL_STORAGE_DIR,
   PLUGIN_REPOS,
   __PLUGIN_PREINSTALL_DIR,
-  __PLUGIN_PREUNINSTALL_FILE,
+  __PLUGIN_UNINSTALL_LIST_FILE,
+  __PLUGIN_UPDATE_LIST_FILE,
   CURRENT_API_VERSION,
   COMPATIBLE_API_VERSIONS
 };

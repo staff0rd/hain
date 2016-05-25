@@ -1,7 +1,6 @@
-/* global jest, describe, it, expect */
 'use strict';
 
-const defaults = require.requireActual('../schema-defaults');
+const defaults = require('../schema-defaults');
 
 describe('schema-defaults.js', () => {
 
@@ -25,6 +24,14 @@ describe('schema-defaults.js', () => {
 
       const objVal = { a: 'a', b: 'b' };
       expect(defaults({ default: objVal })).toBe(objVal);
+    });
+
+    it('should return first enum value if enum has provided', () => {
+      const schema_str = {
+        type: 'string',
+        enum: ['enum0', 'enum1']
+      };
+      expect(defaults(schema_str)).toBe(schema_str.enum[0]);
     });
 
     it('should return 0 if integer type has provided', () => {

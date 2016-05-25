@@ -21,7 +21,7 @@ class ObjectComponent extends React.Component {
     for (const childName in properties) {
       const property = properties[childName];
       const type = property.type;
-      const Component = componentSelector.select(type);
+      const Component = componentSelector.select(property);
       if (Component === undefined)
         continue;
 

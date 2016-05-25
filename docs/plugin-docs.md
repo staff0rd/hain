@@ -33,6 +33,9 @@ Current API Version: `hain-0.3.0`
   * [hain-plugin-naverdictionary](https://github.com/appetizermonster/hain-plugin-naverdictionary)
   * [hain-plugin-best-torrent](https://github.com/kamahl19/hain-plugin-best-torrent)
   * [hain-plugin-npm](https://github.com/kamahl19/hain-plugin-npm)
+  * [hain-plugin-http-codes](https://github.com/quinnjn/hain-plugin-http-codes)
+- `hain-0.3.0`
+  * [hain-plugin-material-colors](https://github.com/aouerfelli/hain-plugin-material-colors)
 
 ## Guides
 

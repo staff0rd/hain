@@ -1,6 +1,7 @@
 'use strict';
 
-jest.unmock('../check-update');
+jest.mock('got');
+
 const mock_got = require('got');
 const checkForUpdate = require('../check-update');
 

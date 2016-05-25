@@ -9,6 +9,7 @@ import { Validator } from 'jsonschema';
 const validator = new Validator();
 const componentSelector = require('./component-selector');
 
+componentSelector.inject((schema) => schema.enum !== undefined, require('./components/enum'));
 componentSelector.inject('object', require('./components/object'));
 componentSelector.inject('array', require('./components/array'));
 componentSelector.inject('string', require('./components/string'));
@@ -43,7 +44,7 @@ class SchemaForm extends React.Component {
 
   render() {
     const { title, schema, model } = this.state;
-    const FormComponent = componentSelector.select(schema.type);
+    const FormComponent = componentSelector.select(schema);
     const errors = validator.validate(model, schema).errors;
 
     let headerComponent = null;

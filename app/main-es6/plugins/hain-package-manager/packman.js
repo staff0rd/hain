@@ -9,12 +9,14 @@ const packageControl = require('./package-control');
 const fileutil = require('../../utils/fileutil');
 const fs = require('fs');
 
-function _createPackegeInfo(name, data, internal) {
+const util = require('./util');
+
+function _createPackageInfo(name, data, internal) {
   return {
     name,
     version: data.version || 'none',
     desc: data.description || '',
-    author: data.author || '',
+    author: util.parseAuthor(data.author) || '',
     homepage: data.homepage || '',
     internal: !!internal
   };
@@ -27,7 +29,8 @@ class Packman {
     this.internalRepoDir = opts.internalRepo;
     this.tempDir = opts.tempDir;
     this.installDir = opts.installDir;
-    this.uninstallFile = opts.uninstallFile;
+    this.updateListFile = opts.updateListFile;
+    this.uninstallListFile = opts.uninstallListFile;
 
     this.packages = [];
     this.internalPackages = [];
@@ -44,7 +47,7 @@ class Packman {
         try {
           const fileContents = yield fileutil.readFile(packageJsonFile);
           const pkgJson = JSON.parse(fileContents.toString());
-          const pkgInfo = _createPackegeInfo(_packageDir, pkgJson);
+          const pkgInfo = _createPackageInfo(_packageDir, pkgJson);
           self.packages.push(pkgInfo);
         } catch (e) {
           console.log(e);
@@ -59,7 +62,7 @@ class Packman {
         try {
           const fileContents = yield fileutil.readFile(packageJsonFile);
           const pkgJson = JSON.parse(fileContents.toString());
-          const pkgInfo = _createPackegeInfo(_packageDir, pkgJson, true);
+          const pkgInfo = _createPackageInfo(_packageDir, pkgJson, true);
           self.internalPackages.push(pkgInfo);
         } catch (e) {
           console.log(e);
@@ -85,7 +88,7 @@ class Packman {
     return (this.getPackage(packageName) !== undefined);
   }
 
-  installPackage(packageName, versionRange, proxyAgent) {
+  installPackage(packageName, versionRange) {
     const self = this;
     return co(function* () {
       if (self.hasPackage(packageName))
@@ -94,16 +97,24 @@ class Packman {
       const saveDir = path.join(self.installDir, packageName);
       const data = yield packageControl.installPackage(packageName, versionRange, saveDir, self.tempDir);
 
-      self.packages.push(_createPackegeInfo(packageName, data));
+      self.packages.push(_createPackageInfo(packageName, data));
     });
   }
 
-  removePackage(packageName) {
+  _uninstallPackage(targetListFile, packageName) {
     if (!this.hasPackage(packageName))
       throw `Can't find a package: ${packageName}`;
 
-    fs.appendFileSync(this.uninstallFile, `${packageName}\n`);
+    fs.appendFileSync(targetListFile, `${packageName}\n`);
     lo_remove(this.packages, x => x.name === packageName);
+  }
+
+  uninstallPackageForUpdate(packageName) {
+    this._uninstallPackage(this.updateListFile, packageName);
+  }
+
+  uninstallPackage(packageName) {
+    this._uninstallPackage(this.uninstallListFile, packageName);
   }
 
 }

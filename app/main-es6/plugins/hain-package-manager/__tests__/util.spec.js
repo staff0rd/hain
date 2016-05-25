@@ -1,7 +1,5 @@
 'use strict';
 
-jest.unmock('../util');
-
 const util = require('../util');
 
 describe('util.js', () => {

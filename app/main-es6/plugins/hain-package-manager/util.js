@@ -1,5 +1,7 @@
 'use strict';
 
+const lo_isString = require('lodash.isstring');
+
 function hasCompatibleAPIKeywords(apiVersions, keywords) {
   for (const keyword of keywords) {
     if (apiVersions.indexOf(keyword) >= 0)
@@ -8,4 +10,10 @@ function hasCompatibleAPIKeywords(apiVersions, keywords) {
   return false;
 }
 
-module.exports = { hasCompatibleAPIKeywords };
+function parseAuthor(author) {
+  if (lo_isString(author))
+    return author;
+  return author.name;
+}
+
+module.exports = { hasCompatibleAPIKeywords, parseAuthor };
