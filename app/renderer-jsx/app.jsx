@@ -16,6 +16,8 @@ const RPCRenderer = require('./rpc-renderer');
 const rpc = new RPCRenderer('mainwindow');
 const remote = require('electron').remote;
 
+const textUtil = require('./text-util');
+
 const Ticket = require('./ticket');
 const searchTicket = new Ticket();
 const previewTicket = new Ticket();
@@ -312,9 +314,9 @@ class AppContainer extends React.Component {
       color={ btnConfig.color }
       hoverColor={ btnConfig.hoverColor }>
       </FontIcon>;
-    return <IconButton 
-      children={ fontIcon } 
-      tooltip={ btnConfig.tooltip } 
+    return <IconButton
+      children={ fontIcon }
+      tooltip={ btnConfig.tooltip }
       tooltipPosition="top-left"
       style={{ fontSize: 20 }} />;
   }
@@ -349,6 +351,13 @@ class AppContainer extends React.Component {
       const result = results[i];
       const avatar = this.parseIconUrl(result.icon);
       const rightIcon = this.displayRightButton(i);
+
+      const title = textUtil.extractText(result.title);
+      const titleStyle = textUtil.extractTextStyle(result.title);
+
+      const desc = textUtil.extractText(result.desc);
+      const descStyle = textUtil.extractTextStyle(result.desc, { fontSize: 13 });
+
       if (result.group !== lastGroup) {
         const headerId = `header.${i}`;
         list.push(
@@ -366,8 +375,8 @@ class AppContainer extends React.Component {
           value={i}
           onKeyboardFocus={this.handleKeyboardFocus.bind(this)}
           style={{ fontSize: 15, lineHeight: '13px' }}
-          primaryText={<div dangerouslySetInnerHTML={{ __html: result.title }} />}
-          secondaryText={<div style={{ fontSize: 13 }} dangerouslySetInnerHTML={{ __html: result.desc }} />}
+          primaryText={<div style={titleStyle} dangerouslySetInnerHTML={{ __html: title }} />}
+          secondaryText={<div style={descStyle} dangerouslySetInnerHTML={{ __html: desc }} />}
           onClick={this.handleItemClick.bind(this, i)}
           onKeyDown={this.handleKeyDown.bind(this)}
           leftAvatar={avatar}
