@@ -13,7 +13,7 @@ All plugin configurations must be located in package.json
   - `group` String - Default result group name (optional, default is `name` value)
 
 **And...**
-* `keywords` Array\<String\> - Add Base API version `hain-0.3.0` for sharing your plugin (**required**)
+* `keywords` Array\<String\> - Add Base API version `hain-0.4.0` for sharing your plugin (**required**)
 
 
 
@@ -23,7 +23,7 @@ All plugin configurations must be located in package.json
   "name": "hain-plugin-google",
   "version": "0.0.1",
   "keywords": [
-    "hain-0.3.0"
+    "hain-0.4.0"
   ],
   "hain": {
     "prefix": "/g",

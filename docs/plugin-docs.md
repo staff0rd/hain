@@ -1,6 +1,6 @@
 # Plugin Documentation (working)
 
-Current API Version: `hain-0.3.0`
+Current API Version: `hain-0.4.0`
 
 ## Examples
 
