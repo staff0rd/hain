@@ -19,6 +19,7 @@ const schemaDefaults = require('../../utils/schema-defaults');
 
 const matchutil = require('../utils/matchutil');
 const textutil = require('../utils/textutil');
+const iconFmt = require('./icon-fmt');
 const prefStore = require('./pref-store');
 const ObservableObject = require('../common/observable-object');
 const storages = require('./storages');
@@ -33,7 +34,7 @@ function createSanitizeSearchResultFunc(pluginId, pluginConfig) {
       _score = defaultScore;
     _score = Math.max(0, Math.min(_score, 1)); // clamp01(x.score)
 
-    const _icon = x.icon;
+    const _icon = x.icon ? iconFmt.parse(pluginConfig.path, x.icon) : null;
     const _title = textutil.sanitize(x.title);
     const _desc = textutil.sanitize(x.desc);
     const _group = x.group;

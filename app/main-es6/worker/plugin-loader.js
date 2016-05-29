@@ -60,8 +60,9 @@ module.exports = (workerContext) => {
       const hainProps = packageJson.hain;
       if (hainProps) {
         pluginConfig = lo_assign(pluginConfig, hainProps);
+        pluginConfig.path = pluginFile;
         pluginConfig.usage = pluginConfig.usage || pluginConfig.prefix;
-        pluginConfig.icon = iconFmt.parseIconUrl(pluginFile, pluginConfig.icon);
+        pluginConfig.icon = iconFmt.parse(pluginFile, pluginConfig.icon);
         pluginConfig.group = pluginConfig.group || pluginId;
       }
       pluginConfig.prefSchema = prefSchema;

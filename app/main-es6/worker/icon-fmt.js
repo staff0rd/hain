@@ -2,14 +2,14 @@
 
 const path = require('path');
 
-function parseIconUrl(baseDir, url) {
+function parse(baseDir, url) {
   if (url === undefined || url.length === 0)
     return '#fa fa-heart';
-  if (url.startsWith('#'))
+  if (url.startsWith('#') || url.startsWith('icon://'))
     return url;
   if (/^https?:/i.test(url))
     return url;
   return `file:///${path.join(baseDir, url)}`;
 }
 
-module.exports = { parseIconUrl };
+module.exports = { parse };
