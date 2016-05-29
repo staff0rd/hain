@@ -428,7 +428,6 @@ class AppContainer extends React.Component {
           <TextField
             key="query"
             ref="query"
-            hintText="Enter your command!"
             fullWidth={true}
             value={this.state.query}
             onKeyDown={this.handleKeyDown.bind(this)}
