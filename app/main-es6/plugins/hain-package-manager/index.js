@@ -192,6 +192,8 @@ module.exports = (context) => {
   function _makeCommandsHelp(query) {
     const ret = matchutil.head(COMMANDS, `${PREFIX}${query}`, (x) => x).map((x) => {
       return {
+        id: x.elem,
+        payload: 'redirect',
         redirect: x.elem,
         title: matchutil.makeStringBoldHtml(x.elem, x.matches),
         desc: NAME
@@ -222,7 +224,8 @@ module.exports = (context) => {
         const pkgInfo = getPackageInfo(id);
         if (pkgInfo.homepage)
           shell.openExternal(pkgInfo.homepage);
-      }
+      },
+      'redirect': () => app.setQuery(id)
     };
     const func = funcs[payload];
     func();

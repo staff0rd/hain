@@ -97,7 +97,8 @@ module.exports = (context) => {
       'goUpdate': () => {
         shell.openExternal(payload);
         app.close();
-      }
+      },
+      'redirect': () => app.setQuery(payload)
     };
     const func = commands[id];
     if (func !== undefined)
@@ -107,6 +108,8 @@ module.exports = (context) => {
   function _makeCommandsHelp(query) {
     const ret = matchutil.head(COMMANDS, query, (x) => x).map((x) => {
       return {
+        id: 'redirect',
+        payload: x.elem,
         redirect: x.elem,
         title: matchutil.makeStringBoldHtml(x.elem, x.matches),
         desc: NAME,
