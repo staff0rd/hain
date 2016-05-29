@@ -415,7 +415,7 @@ class AppContainer extends React.Component {
       <MuiThemeProvider muiTheme={muiTheme}>
       <div>
         <div key="queryWrapper" style={{ position: 'fixed', 'zIndex': 1000, top: 0, width: '776px' }}>
-          <div style={{ marginTop: '7px', marginBottom: '-8px', color: '#aaa', fontSize: '0.7em' }}>
+          <div style={{ marginTop: '7px', marginBottom: '-8px', color: '#a7a7a7', fontSize: '0.7em' }}>
             <table style={{ width: '100%' }}>
               <tr>
                 <td width="50%">Hain</td>
