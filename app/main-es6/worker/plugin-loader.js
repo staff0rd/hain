@@ -62,6 +62,7 @@ module.exports = (workerContext) => {
         pluginConfig = lo_assign(pluginConfig, hainProps);
         pluginConfig.path = pluginFile;
         pluginConfig.usage = pluginConfig.usage || pluginConfig.prefix;
+        pluginConfig.redirect = pluginConfig.redirect || pluginConfig.prefix;
         pluginConfig.icon = iconFmt.parse(pluginFile, pluginConfig.icon);
         pluginConfig.group = pluginConfig.group || pluginId;
       }

@@ -13,7 +13,7 @@ let browserWindow = null;
 function createWindow(cb) {
   browserWindow = new BrowserWindow({
     width: 800,
-    height: 510,
+    height: 530,
     alwaysOnTop: true,
     center: true,
     frame: false,

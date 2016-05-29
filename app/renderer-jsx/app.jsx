@@ -146,10 +146,11 @@ class AppContainer extends React.Component {
     this.updatePreview();
   }
 
-  setQuery(args) {
-    this.setState({ query: args, selectionIndex: 0 });
+  setQuery(query) {
+    const _query = query || '';
+    this.setState({ query: _query, selectionIndex: 0 });
     this.refs.query.focus();
-    this.search(args);
+    this.search(_query);
   }
 
   scrollTo(selectionIndex) {
@@ -188,11 +189,6 @@ class AppContainer extends React.Component {
   execute(item) {
     if (item === undefined)
       return;
-    if (item.redirect) {
-      this.setQuery(item.redirect);
-      return;
-    }
-
     const params = {
       pluginId: item.pluginId,
       id: item.id,
@@ -330,9 +326,8 @@ class AppContainer extends React.Component {
   }
 
   parseIconUrl(iconUrl) {
-    if (!lo_isString(iconUrl)) {
+    if (!lo_isString(iconUrl))
       return null;
-    }
     if (iconUrl.startsWith('#')) {
       const iconClass = iconUrl.substring(1);
       return <Avatar key="icon" icon={<FontIcon className={iconClass} />} />;
@@ -419,11 +414,20 @@ class AppContainer extends React.Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
       <div>
-        <div key="queryWrapper" style={{ position: 'fixed', height: '40px', 'zIndex': 1000, top: 0, width: '776px' }}>
+        <div key="queryWrapper" style={{ position: 'fixed', 'zIndex': 1000, top: 0, width: '776px' }}>
+          <div style={{ marginTop: '7px', marginBottom: '-8px', color: '#aaa', fontSize: '0.7em' }}>
+            <table style={{ width: '100%' }}>
+              <tr>
+                <td width="50%">Hain</td>
+                <td width="50%" style={{ textAlign: 'right' }}>
+                <kbd>↓</kbd> <kbd>↑</kbd> to navigate, <kbd>tab</kbd> to expand(redirect), <kbd>enter</kbd> to execute
+                </td>
+              </tr>
+            </table>
+          </div>
           <TextField
             key="query"
             ref="query"
-            style={{ fontSize: '20px' }}
             hintText="Enter your command!"
             fullWidth={true}
             value={this.state.query}

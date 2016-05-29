@@ -83,7 +83,8 @@ function createResponseObject(resFunc, pluginId, pluginConfig) {
 function _makeIntroHelp(pluginConfig) {
   const usage = pluginConfig.usage || 'please fill usage in package.json';
   return [{
-    redirect: pluginConfig.redirect || pluginConfig.prefix,
+    redirect: pluginConfig.redirect,
+    payload: pluginConfig.redirect,
     title: textutil.sanitize(usage),
     desc: textutil.sanitize(pluginConfig.name),
     icon: pluginConfig.icon,
@@ -98,7 +99,8 @@ function _makePrefixHelp(pluginConfig, query) {
   const filtered = matchutil.head(candidates, query, (x) => x);
   return filtered.map((x) => {
     return {
-      redirect: pluginConfig.redirect || pluginConfig.prefix,
+      redirect: pluginConfig.redirect,
+      payload: pluginConfig.redirect,
       title: textutil.sanitize(matchutil.makeStringBoldHtml(x.elem, x.matches)),
       desc: textutil.sanitize(pluginConfig.name),
       group: 'Plugin Commands',
@@ -275,8 +277,11 @@ module.exports = (workerContext) => {
   }
 
   function execute(pluginId, id, payload) {
-    if (plugins[pluginId] === undefined)
+    if (plugins[pluginId] === undefined) {
+      if (payload)
+        workerContext.app.setQuery(payload);
       return;
+    }
     const executeFunc = plugins[pluginId].execute;
     if (executeFunc === undefined)
       return;
