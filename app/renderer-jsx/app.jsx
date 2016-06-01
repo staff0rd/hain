@@ -266,10 +266,31 @@ class AppContainer extends React.Component {
       Enter: this.handleEnter.bind(this),
       Tab: this.handleTab.bind(this)
     };
+    const ctrlKeyHandlers = {
+      P: this.handleSelection.bind(this, -1),
+      p: this.handleSelection.bind(this, -1),
+      K: this.handleSelection.bind(this, -1),
+      k: this.handleSelection.bind(this, -1),
+      N: this.handleSelection.bind(this, 1),
+      n: this.handleSelection.bind(this, 1),
+      J: this.handleSelection.bind(this, 1),
+      j: this.handleSelection.bind(this, 1)
+    };
+    const selectedHandlerForCtrl = ctrlKeyHandlers[key];
     const selectedHandler = keyHandlers[key];
-    if (selectedHandler !== undefined) {
-      selectedHandler();
-      evt.preventDefault();
+    if (evt.ctrlKey) {
+      if (selectedHandlerForCtrl !== undefined) {
+        selectedHandlerForCtrl();
+        evt.preventDefault();
+      } else if (selectedHandler !== undefined) {
+        selectedHandler();
+        evt.preventDefault();
+      }
+    } else {
+      if (selectedHandler !== undefined) {
+        selectedHandler();
+        evt.preventDefault();
+      }
     }
   }
 
