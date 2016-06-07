@@ -3,6 +3,7 @@
 const pkg = require('../../../package.json');
 const checkForUpdate = require('./check-update');
 
+const CONTRIBUTORS_URL = 'https://github.com/appetizermonster/hain/graphs/contributors';
 const COMMANDS = ['/reload', '/restart', '/quit', '/about', '/preferences', '/update'];
 const NAME = 'hain-commands';
 
@@ -55,7 +56,7 @@ module.exports = (context) => {
     const basicCommandResults = {
       '/reload': 'Reload Plugins',
       '/restart': 'Restart Hain',
-      '/about': `Hain v${pkg.version} by Heejin Lee &lt;monster@teamappetizer.com&gt;`,
+      '/about': `Hain v${pkg.version}`,
       '/quit': 'Quit Hain',
       '/preferences': 'Open Preferences'
     };
@@ -87,8 +88,8 @@ module.exports = (context) => {
       },
       '/quit': () => app.quit(),
       '/about': () => {
-        toast.enqueue('Thank you for using Hain');
-        app.setQuery('');
+        shell.openExternal(CONTRIBUTORS_URL);
+        app.close(true);
       },
       '/preferences': () => {
         app.openPreferences();
