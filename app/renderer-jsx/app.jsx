@@ -135,7 +135,7 @@ class AppContainer extends React.Component {
       const { ticket, html } = msg;
       if (previewTicket.current !== ticket)
         return;
-      if (this.state.previewHtml == html)
+      if (this.state.previewHtml === html)
         return;
       this.setState({ previewHtml: html });
     });
