@@ -157,14 +157,14 @@ module.exports = (context) => {
 
   function search(query, res) {
     const query_trim = query.replace(' ', '');
-    const recentFuzzyResults = matchutil.fuzzy(_recentUsedItems, query_trim, x => x).slice(0, 2);
+    const recentFuzzyResults = matchutil.fuzzy(_recentUsedItems, query_trim).slice(0, 2);
     const selectedRecentItems = recentFuzzyResults.map(x => x.elem);
     let recentSearchResults = [];
 
     if (recentFuzzyResults.length > 0)
       recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', RECENT_ITEM_WEIGHT);
 
-    const fileFuzzyResults = matchutil.fuzzy(db, query_trim, x => x);
+    const fileFuzzyResults = matchutil.fuzzy(db, query_trim);
     let fileSearchResults = _fuzzyResultToSearchResult(fileFuzzyResults.slice(0, 10));
 
     // Reject if it is duplicated with recent items

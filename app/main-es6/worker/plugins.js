@@ -96,7 +96,7 @@ function _makeIntroHelp(pluginConfig) {
 function _makePrefixHelp(pluginConfig, query) {
   if (!pluginConfig.prefix) return;
   const candidates = [pluginConfig.prefix];
-  const filtered = matchutil.head(candidates, query, (x) => x);
+  const filtered = matchutil.head(candidates, query);
   return filtered.map((x) => {
     return {
       redirect: pluginConfig.redirect,

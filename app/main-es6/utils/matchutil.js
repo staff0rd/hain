@@ -69,18 +69,22 @@ function headMatch(elem, testStr, keywordGetter) {
   return { elem: elem, matches: matches, score: 1 };
 }
 
+function _defaultKeywordGetter(str) {
+  return str;
+}
+
 function search(elems, testStr, keywordGetter, matchFunc) {
   const results = [];
+  const _keywordGetter = keywordGetter || _defaultKeywordGetter;
 
-  if (testStr === null || testStr === undefined || testStr.length === 0) {
+  if (testStr === null || testStr === undefined || testStr.length === 0)
     return results;
-  }
 
   const testStr_norm = testStr.toLowerCase();
   if (lo_isArray(elems)) {
     // array
     for (let i = 0; i < elems.length; ++i) {
-      const matchResult = matchFunc(elems[i], testStr_norm, keywordGetter);
+      const matchResult = matchFunc(elems[i], testStr_norm, _keywordGetter);
       if (matchResult.score === 0) continue;
       results.push(matchResult);
     }
@@ -89,7 +93,7 @@ function search(elems, testStr, keywordGetter, matchFunc) {
     for (const prop in elems) {
       const arr = elems[prop];
       for (let i = 0; i < arr.length; ++i) {
-        const matchResult = matchFunc(arr[i], testStr_norm, keywordGetter);
+        const matchResult = matchFunc(arr[i], testStr_norm, _keywordGetter);
         if (matchResult.score === 0) continue;
         results.push(matchResult);
       }

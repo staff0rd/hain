@@ -190,7 +190,7 @@ module.exports = (context) => {
   }
 
   function _makeCommandsHelp(query) {
-    const ret = matchutil.head(COMMANDS, `${PREFIX}${query}`, (x) => x).map((x) => {
+    const ret = matchutil.head(COMMANDS, `${PREFIX}${query}`).map((x) => {
       return {
         id: x.elem,
         payload: 'redirect',
