@@ -72,7 +72,7 @@ module.exports = (context) => {
 
     lazyIndexingKeys[dir] = setTimeout(() => {
       co(refreshIndex([dir], recursive));
-    }, 5000);
+    }, 10000);
   }
 
   function* setupWatchers(dirs, recursive) {
