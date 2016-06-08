@@ -34,7 +34,6 @@ function fuzzyMatch(elem, testStr, keywordGetter) {
   const matches = [];
 
   for (let i = srcStr.length - 1; i >= 0; --i) {
-    const srcChr = srcStr.charAt(i);
     const srcChrCode = srcStr.charCodeAt(i);
     const testChrCode = testStr.charCodeAt(pattern_i);
     if (pattern_i < 0 || srcChrCode !== testChrCode) {
