@@ -50,7 +50,7 @@ describe('search-client.js', () => {
              });
     });
 
-    pit('should reject if `got` has rejected', (done) => {
+    pit('should reject if `got` has rejected', () => {
       mock_got.mockReturnValueOnce(Promise.resolve(null));
 
       return searchClient.findCompatiblePackages('fakeBackend', [])
