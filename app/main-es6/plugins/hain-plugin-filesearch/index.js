@@ -3,12 +3,14 @@
 const fs = require('original-fs');
 const co = require('co');
 const lo_reject = require('lodash.reject');
+const lo_findIndex = require('lodash.findindex');
 const path = require('path');
 
 const readdir = require('./readdir');
 
 const RECENT_ITEM_COUNT = 100;
-const RECENT_ITEM_WEIGHT = 1.2;
+const RECENT_ITEM_WEIGHT = 1.5;
+const BASENAME_MATCH_WEIGHT = 1.5;
 
 const matchFunc = (filePath, stats) => {
   const ext = path.extname(filePath).toLowerCase();
@@ -59,16 +61,15 @@ module.exports = (context) => {
         continue;
       }
       const files = yield co(readdir(dir, recursive, matchFunc));
-      logger.log(`index updated ${dir}`);
       db[dir] = files;
+      logger.log(`index updated ${dir}, ${files.length} files`);
     }
   }
 
   function lazyRefreshIndex(dir, recursive) {
     const _lazyKey = lazyIndexingKeys[dir];
-    if (_lazyKey !== undefined) {
+    if (_lazyKey !== undefined)
       clearTimeout(_lazyKey);
-    }
 
     lazyIndexingKeys[dir] = setTimeout(() => {
       co(refreshIndex([dir], recursive));
@@ -140,36 +141,75 @@ module.exports = (context) => {
     const _group = group || 'Files & Folders';
     const _scoreWeight = scoreWeight || 1;
     return results.map(x => {
-      const filePath = x.elem;
-      const filePath_bold = matchutil.makeStringBoldHtml(filePath, x.matches);
-      const filePath_base64 = new Buffer(filePath).toString('base64');
-      const score = x.score * computeRatio(filePath) * _scoreWeight;
+      const path_base64 = new Buffer(x.path).toString('base64');
+      const score = x.score * computeRatio(x.path) * _scoreWeight;
       return {
-        id: filePath,
-        title: path.basename(filePath, path.extname(filePath)),
-        desc: filePath_bold,
-        icon: `icon://${filePath_base64}`,
+        id: x.path,
+        title: path.basename(x.path, path.extname(x.path)),
+        desc: x.html,
+        icon: `icon://${path_base64}`,
         group: _group,
         score
       };
     });
   }
 
+  function combineFuzzyResults(combinedTarget, source) {
+    for (const x of source) {
+      const allpath = x.path;
+      const idx = lo_findIndex(combinedTarget, { path: allpath });
+      // Append if there is no this item on combinedTarget
+      if (idx < 0) {
+        combinedTarget.push(x);
+        continue;
+      }
+      // Replace after comparing
+      const old = combinedTarget[idx];
+      if (old.score >= x.score)
+        continue;
+      combinedTarget[idx] = x;
+    }
+  }
+
+  function fuzzy(items, query) {
+    const resultsByPath = matchutil.fuzzy(items, query).slice(0, 20).map(x => {
+      return {
+        path: x.elem,
+        html: matchutil.makeStringBoldHtml(x.elem, x.matches),
+        score: x.score
+      };
+    });
+    const resultsByBasename = matchutil.fwdfuzzy(items, query, x => path.basename(x, path.extname(x))).slice(0, 20).map(x => {
+      const allpath = x.elem;
+      const extname = path.extname(allpath);
+      const basename = path.basename(allpath, extname);
+      const containerpath = allpath.substring(0, allpath.length - basename.length - extname.length);
+      const html = matchutil.makeStringBoldHtml(basename, x.matches);
+      return {
+        path: allpath,
+        html: containerpath + html + extname,
+        score: x.score * BASENAME_MATCH_WEIGHT
+      };
+    });
+    const combined = [];
+    combineFuzzyResults(combined, resultsByPath);
+    combineFuzzyResults(combined, resultsByBasename);
+    return combined;
+  }
+
   function search(query, res) {
     const query_trim = query.replace(' ', '');
-    const recentFuzzyResults = matchutil.fuzzy(_recentUsedItems, query_trim).slice(0, 2);
-    const selectedRecentItems = recentFuzzyResults.map(x => x.elem);
+    const recentFuzzyResults = fuzzy(_recentUsedItems, query_trim).slice(0, 2);
     let recentSearchResults = [];
 
     if (recentFuzzyResults.length > 0)
       recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', RECENT_ITEM_WEIGHT);
 
-    const fileFuzzyResults = matchutil.fuzzy(db, query_trim);
-    let fileSearchResults = _fuzzyResultToSearchResult(fileFuzzyResults.slice(0, 10));
-
+    let fileFuzzyResults = fuzzy(db, query_trim).slice(0, 10);
     // Reject if it is duplicated with recent items
-    fileSearchResults = lo_reject(fileSearchResults, x => selectedRecentItems.indexOf(x.id) >= 0);
+    fileFuzzyResults = lo_reject(fileFuzzyResults, x => lo_findIndex(recentFuzzyResults, { path: x.path }) >= 0);
 
+    const fileSearchResults = _fuzzyResultToSearchResult(fileFuzzyResults);
     const searchResults = recentSearchResults.concat(fileSearchResults);
     res.add(searchResults);
   }

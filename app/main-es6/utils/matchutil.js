@@ -23,11 +23,11 @@ function fuzzyMatchFallback(elem, keyword, testStr, fuzzyScore) {
   return { elem, matches: [], score, length: srcStr.length };
 }
 
+const MAX_MATCH_LENGTH = 15;
+const MAX_MATCH_SCORE = (MAX_MATCH_LENGTH + MAX_MATCH_LENGTH * MAX_MATCH_LENGTH) * 0.5;
+
 function fuzzyMatch(elem, testStr, keywordGetter) {
   const srcStr = keywordGetter(elem).toLowerCase();
-
-  const maxLength = 15;
-  const maxScore = (maxLength + maxLength * maxLength) * 0.5;
   let fuzzyScore = 0;
   let pattern_i = testStr.length - 1;
   let add = 1;
@@ -46,13 +46,41 @@ function fuzzyMatch(elem, testStr, keywordGetter) {
     matches.push(i);
   }
 
-  fuzzyScore = Math.min(maxScore, fuzzyScore);
-  fuzzyScore /= maxScore;
+  fuzzyScore = Math.min(MAX_MATCH_SCORE, fuzzyScore);
+  fuzzyScore /= MAX_MATCH_SCORE;
 
   const success = (pattern_i < 0);
-  if (success) {
+  if (success)
     return { elem, matches: matches.reverse(), score: fuzzyScore, length: srcStr.length };
+  return fuzzyMatchFallback(elem, srcStr, testStr, fuzzyScore);
+}
+
+function fwdFuzzyMatch(elem, testStr, keywordGetter) {
+  const srcStr = keywordGetter(elem).toLowerCase();
+  let fuzzyScore = 0;
+  let pattern_i = 0;
+  let add = 1;
+  const matches = [];
+
+  for (let i = 0; i < srcStr.length; ++i) {
+    const srcChrCode = srcStr.charCodeAt(i);
+    const testChrCode = testStr.charCodeAt(pattern_i);
+    if (pattern_i >= testStr.length || srcChrCode !== testChrCode) {
+      add *= 0.5;
+      continue;
+    }
+    pattern_i++;
+    add += 1;
+    fuzzyScore += add;
+    matches.push(i);
   }
+
+  fuzzyScore = Math.min(MAX_MATCH_SCORE, fuzzyScore);
+  fuzzyScore /= MAX_MATCH_SCORE;
+
+  const success = (pattern_i >= testStr.length);
+  if (success)
+    return { elem, matches, score: fuzzyScore, length: srcStr.length };
   return fuzzyMatchFallback(elem, srcStr, testStr, fuzzyScore);
 }
 
@@ -109,6 +137,10 @@ function fuzzy(elems, testStr, keywordGetter) {
   return search(elems, testStr, keywordGetter, fuzzyMatch);
 }
 
+function fwdfuzzy(elems, testStr, keywordGetter) {
+  return search(elems, testStr, keywordGetter, fwdFuzzyMatch);
+}
+
 function head(elems, testStr, keywordGetter) {
   return search(elems, testStr, keywordGetter, headMatch);
 }
@@ -131,7 +163,8 @@ function makeStringBoldHtml(str, boldIndices) {
 }
 
 module.exports = {
-  fuzzy: fuzzy,
-  head: head,
-  makeStringBoldHtml: makeStringBoldHtml
+  fuzzy,
+  fwdfuzzy,
+  head,
+  makeStringBoldHtml
 };
