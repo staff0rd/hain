@@ -84,6 +84,21 @@ See [PreferencesObject](preferences-object.md)
   }
   ```
 
+* **Enum Values**  
+  You can define enum values for string property  
+  
+  **Example**
+  ```json
+  {
+    "type": "string",
+    "enum": [
+      "a",
+      "b",
+      "c"
+    ]
+  }
+  ```
+
 ## Limitations  
 Currently, Type of root object must be `object`.
 

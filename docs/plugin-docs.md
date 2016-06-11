@@ -36,6 +36,8 @@ Current API Version: `hain-0.4.0`
   * [hain-plugin-http-codes](https://github.com/quinnjn/hain-plugin-http-codes)
 - `hain-0.3.0`
   * [hain-plugin-material-colors](https://github.com/aouerfelli/hain-plugin-material-colors)
+- `hain-0.4.0`
+  * not yet
 
 ## Guides
 
