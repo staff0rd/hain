@@ -7,6 +7,19 @@ const matchutil = require('../../utils/matchutil');
 
 const BASENAME_MATCH_WEIGHT = 2.0;
 
+function computeRatio(filePath) {
+  let ratio = 1;
+  const ext = path.extname(filePath).toLowerCase();
+  const basename = path.basename(filePath).toLowerCase();
+  if (ext !== '.lnk' && ext !== '.exe')
+    ratio *= 0.5;
+  if (ext === '.lnk')
+    ratio *= 1.5;
+  if (basename.indexOf('uninstall') >= 0 || basename.indexOf('remove') >= 0)
+    ratio *= 0.9;
+  return ratio;
+}
+
 function combineFuzzyResults(combinedTarget, source) {
   for (const x of source) {
     const allpath = x.path;
@@ -29,7 +42,7 @@ function fuzzy(items, query) {
     return {
       path: x.elem,
       html: matchutil.makeStringBoldHtml(x.elem, x.matches),
-      score: x.score
+      score: x.score * computeRatio(x.elem)
     };
   });
   const resultsByBasename = matchutil.fwdfuzzy(items, query, x => path.basename(x, path.extname(x))).slice(0, 20).map(x => {
@@ -41,7 +54,7 @@ function fuzzy(items, query) {
     return {
       path: allpath,
       html: containerPath + html + extname,
-      score: x.score * BASENAME_MATCH_WEIGHT
+      score: x.score * BASENAME_MATCH_WEIGHT * computeRatio(allpath)
     };
   });
   const combined = [];

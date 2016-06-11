@@ -122,24 +122,11 @@ module.exports = (context) => {
     });
   }
 
-  function computeRatio(filePath) {
-    let ratio = 1;
-    const ext = path.extname(filePath).toLowerCase();
-    const basename = path.basename(filePath).toLowerCase();
-    if (ext !== '.lnk' && ext !== '.exe')
-      ratio *= 0.5;
-    if (ext === '.lnk')
-      ratio *= 1.5;
-    if (basename.indexOf('uninstall') >= 0 || basename.indexOf('remove') >= 0)
-      ratio *= 0.9;
-    return ratio;
-  }
-
   function _fuzzyResultToSearchResult(results, group, fixedScore) {
     const _group = group || 'Files & Folders';
     return results.map(x => {
       const path_base64 = new Buffer(x.path).toString('base64');
-      const score = (fixedScore !== undefined) ? fixedScore : x.score * computeRatio(x.path);
+      const score = (fixedScore !== undefined) ? fixedScore : x.score;
       return {
         id: x.path,
         title: path.basename(x.path, path.extname(x.path)),
@@ -156,9 +143,15 @@ module.exports = (context) => {
     const recentFuzzyResults = util.fuzzy(_recentUsedItems, query_trim).slice(0, 2);
     const defaultFuzzyResults = util.fuzzy(db, query_trim).slice(0, 10);
 
+    let highestScore = 0.15;
+    if (defaultFuzzyResults.length > 0)
+      highestScore = defaultFuzzyResults[0].score;
+
     let recentSearchResults = [];
-    if (recentFuzzyResults.length > 0)
-      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', 0.15);
+    if (recentFuzzyResults.length > 0) {
+      highestScore = Math.max(highestScore, recentFuzzyResults[0].score);
+      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', highestScore);
+    }
 
     // Reject if it is duplicated with recent items
     const sanitizedFuzzyResults = lo_reject(defaultFuzzyResults, x => lo_findIndex(recentFuzzyResults, { path: x.path }) >= 0);
