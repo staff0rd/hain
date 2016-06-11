@@ -19,7 +19,7 @@ function fuzzyMatchFallback(elem, keyword, testStr, fuzzyScore) {
   }
   if (srcStr.length > 0)
     score /= srcStr.length;
-  score *= 0.1;
+  score *= 0.05;
   return { elem, matches: [], score, length: srcStr.length };
 }
 
