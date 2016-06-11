@@ -1,9 +1,7 @@
 'use strict';
 
-import React from 'react';
-
 const lo_isString = require('lodash.isstring');
-const textutil = require('../../main-es6/utils/textutil');
+const textutil = require('../../main/utils/textutil');
 
 function wrapDescription(description) {
   if (description === undefined)

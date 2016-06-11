@@ -1,6 +1,6 @@
 {
   "name": "hain",
-  "main": "app/main-es6/main.js",
+  "main": "app/main/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "gulp && electron .",
