@@ -17,7 +17,7 @@ test_script:
   # run jest
   - npm test
 
-build:
+build_script:
   - gulp build-all
 
 artifacts:
