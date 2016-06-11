@@ -1,3 +1,7 @@
+branches:
+  only:
+    - master
+
 environment:
   nodejs_version: "5.5.0"
   nodejs_arch: "x64"
@@ -12,6 +16,10 @@ install:
 test_script:
   # run jest
   - npm test
-  - gulp build
 
-build: off
+build:
+  - gulp build-all
+
+artifacts:
+  - path: 'out\*.zip'
+  - path: 'out\*.exe'
