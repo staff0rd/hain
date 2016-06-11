@@ -157,7 +157,7 @@ module.exports = (context) => {
     let recentSearchResults = [];
 
     if (recentFuzzyResults.length > 0)
-      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', 1);
+      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', 0.15);
 
     let fileFuzzyResults = util.fuzzy(db, query_trim).slice(0, 10);
     // Reject if it is duplicated with recent items
