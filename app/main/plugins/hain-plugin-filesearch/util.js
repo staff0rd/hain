@@ -11,7 +11,7 @@ function computeRatio(filePath) {
   let ratio = 1;
   const ext = path.extname(filePath).toLowerCase();
   const basename = path.basename(filePath).toLowerCase();
-  if (ext !== '.lnk' && ext !== '.exe')
+  if (ext !== '.lnk' && ext !== '.exe' && ext !== '.appref-ms')
     ratio *= 0.5;
   if (ext === '.lnk')
     ratio *= 1.5;
