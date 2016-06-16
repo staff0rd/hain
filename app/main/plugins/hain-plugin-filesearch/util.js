@@ -11,10 +11,12 @@ function computeRatio(filePath) {
   let ratio = 1;
   const ext = path.extname(filePath).toLowerCase();
   const basename = path.basename(filePath).toLowerCase();
-  if (ext !== '.lnk' && ext !== '.exe')
+  if (ext !== '.lnk' && ext !== '.exe' && ext !== '.appref-ms')
     ratio *= 0.5;
   if (ext === '.lnk')
     ratio *= 1.5;
+  if (ext === '.appref-ms')
+    ratio *= 1.4;
   if (basename.indexOf('uninstall') >= 0 || basename.indexOf('remove') >= 0)
     ratio *= 0.9;
   return ratio;

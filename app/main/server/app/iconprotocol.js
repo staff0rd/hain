@@ -33,7 +33,7 @@ function register() {
       let cacheKey = filePath;
       const extName = path.extname(filePath).toLowerCase();
 
-      if (extName.length > 0 && extName !== '.exe' && extName !== '.lnk') {
+      if (extName.length > 0 && extName !== '.exe' && extName !== '.lnk' && extName !== '.appref-ms') {
         cacheKey = extName;
       } else {
         cacheKey = filePath;
