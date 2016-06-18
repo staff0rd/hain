@@ -1,11 +1,10 @@
 'use strict';
 
 const sanitizeHtml = require('sanitize-html');
+const lo_isString = require('lodash.isstring');
+const lo_assign = require('lodash.assign');
 
-function sanitize(text) {
-  if (text === undefined) {
-    return undefined;
-  }
+function _sanitizeHtml(text) {
   return sanitizeHtml(text, {
     allowedTags: ['a', 'b', 'i', 'u', 'em', 'strong', 'span'],
     allowedAttributes: {
@@ -13,6 +12,16 @@ function sanitize(text) {
       'i': ['class'],
       'span': ['class', 'style']
     }
+  });
+}
+
+function sanitize(txtObj) {
+  if (txtObj === undefined)
+    return undefined;
+  if (lo_isString(txtObj))
+    return _sanitizeHtml(txtObj);
+  return lo_assign(txtObj, {
+    text: _sanitizeHtml(txtObj.text)
   });
 }
 
