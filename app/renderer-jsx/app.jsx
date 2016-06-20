@@ -408,7 +408,7 @@ class AppContainer extends React.Component {
       const _icon = isLoading ? 'fa fa-spinner fa-spin' : 'fa fa-heart';
       list.push(
         <ListItem primaryText={_text}
-                  secondaryText="It may takes some time to show results"
+                  secondaryText="It may take some time to show results"
                   leftAvatar={<Avatar icon={<FontIcon className={_icon} />} />} />
       );
     }
