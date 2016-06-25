@@ -1,7 +1,5 @@
 'use strict';
 
-const _ = require('lodash');
-
 function defaults(schema) {
   if (schema.default)
     return schema.default;
