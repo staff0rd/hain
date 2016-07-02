@@ -1,6 +1,6 @@
 'use strict';
 
-const textutil = require('../utils/textutil');
+const textutil = require('../shared/textutil');
 const rpc = require('./rpc-server');
 
 function enqueue(message, duration) {

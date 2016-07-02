@@ -2,7 +2,7 @@
 
 const ipc = require('electron').ipcMain;
 const co = require('co');
-const logger = require('../utils/logger');
+const logger = require('../shared/logger');
 
 const funcs = {};
 const clients = {};

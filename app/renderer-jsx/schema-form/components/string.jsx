@@ -17,9 +17,8 @@ class StringComponent extends React.Component {
     let title = schema.title || name;
     const description = utils.wrapDescription(schema.description);
 
-    if (title !== undefined) {
+    if (title !== undefined)
       title = (<h5 style={{ marginBottom: '2px' }}>{title}</h5>);
-    }
 
     return (
       <div>

@@ -3,7 +3,7 @@
 import React from 'react'; // DO NOT REMOVE THIS LINE, JSX USES THIS LIBRARY
 
 const lo_isString = require('lodash.isstring');
-const textutil = require('../../main/utils/textutil');
+const textutil = require('../../main/shared/textutil');
 
 function wrapDescription(description) {
   if (description === undefined)

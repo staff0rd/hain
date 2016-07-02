@@ -4,7 +4,7 @@ const electron = require('electron');
 const globalShortcut = electron.globalShortcut;
 const dialog = electron.dialog;
 
-const pref = require('../pref');
+const pref = require('../app-pref');
 const mainWindow = require('./mainwindow');
 
 function _registerShortcut(shortcut, query) {

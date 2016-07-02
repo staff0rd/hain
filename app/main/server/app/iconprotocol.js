@@ -6,7 +6,7 @@ const SimpleCache = require('simple-lru-cache');
 const electron = require('electron');
 const app = electron.app;
 
-const logger = require('../../utils/logger');
+const logger = require('../../shared/logger');
 const platformUtil = require('../../../platform-util');
 
 function register() {

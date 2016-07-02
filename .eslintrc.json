@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb/base",
+  "extends": "airbnb-base",
   "rules": {
     "comma-dangle": ["error", "never"],
     "no-unused-vars": "warn",
@@ -17,9 +17,20 @@
     "padded-blocks": "off",
     "no-use-before-define": "warn",
     "no-param-reassign": ["error", { "props": false }],
-    "max-len": "off"
+    "max-len": "off",
+    "no-underscore-dangle": "off",
+    "strict": "off",
+    "global-require": "off"
    },
    "env": {
      "jest": true
+   },
+   "plugins": [
+     "react"
+   ],
+   "parserOptions": {
+     "ecmaFeatures": {
+       "jsx": true
+     }
    }
 }

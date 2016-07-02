@@ -1,7 +1,7 @@
 'use strict';
 
 const procMsg = require('./proc-msg');
-const logger = require('../utils/logger');
+const logger = require('../shared/logger');
 
 function call(service, func, args) {
   procMsg.send('proxy', { service, func, args });

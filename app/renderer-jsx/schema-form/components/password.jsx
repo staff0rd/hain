@@ -1,42 +1,35 @@
 'use strict';
 
 import React from 'react';
-import { SelectField, MenuItem } from 'material-ui';
+import { TextField } from 'material-ui';
 
 const utils = require('../utils');
 
-class EnumComponent extends React.Component {
-  handleChange(evt, idx, val) {
+class PasswordComponent extends React.Component {
+  handleChange(evt, val) {
     const { onChange, path } = this.props;
     onChange(path, val);
   }
 
   render() {
     const { schema, model, name, path, errors } = this.props;
+    const error = utils.findErrorMessage(errors, path);
     let title = schema.title || name;
     const description = utils.wrapDescription(schema.description);
-    const items = [];
 
     if (title !== undefined)
       title = (<h5 style={{ marginBottom: '2px' }}>{title}</h5>);
-
-    for (const itemData of schema.enum) {
-      const item = (<MenuItem primaryText={itemData} value={itemData} />);
-      items.push(item);
-    }
 
     return (
       <div>
         {title}
         {description}
-        <SelectField name="text" value={model}
+        <TextField type="password" name="text" value={model} errorText={error}
                    fullWidth={true} style={{ marginTop: '-2px' }}
-                   onChange={this.handleChange.bind(this)} >
-         {items}
-        </SelectField>
+                   onChange={this.handleChange.bind(this)} />
       </div>
     );
   }
 }
 
-module.exports = EnumComponent;
+module.exports = PasswordComponent;
