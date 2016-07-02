@@ -6,7 +6,7 @@ const lo_assign = require('lodash.assign');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const logger = require('../utils/logger');
+const logger = require('../shared/logger');
 const iconFmt = require('./icon-fmt');
 const conf = require('../conf');
 

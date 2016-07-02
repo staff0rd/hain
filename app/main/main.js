@@ -15,7 +15,7 @@
   const electronApp = require('electron').app;
   electronApp.commandLine.appendSwitch('js-flags', '--always-compact');
 
-  const logger = require('./utils/logger');
+  const logger = require('./shared/logger');
   process.on('uncaughtException', (err) => {
     logger.log(err);
     dialog.showErrorBox('Hain', `Unhandled Error: ${err.stack || err}`);

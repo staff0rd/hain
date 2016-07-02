@@ -6,7 +6,7 @@ const lo_remove = require('lodash.remove');
 const co = require('co');
 const path = require('path');
 const packageControl = require('./package-control');
-const fileutil = require('../../utils/fileutil');
+const fileutil = require('../../shared/fileutil');
 const fs = require('fs');
 
 const util = require('./util');

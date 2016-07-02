@@ -6,8 +6,8 @@ const cp = require('child_process');
 const electron = require('electron');
 const electronApp = electron.app;
 
-const asyncutil = require('../../utils/asyncutil');
-const logger = require('../../utils/logger');
+const asyncutil = require('../../shared/asyncutil');
+const logger = require('../../shared/logger');
 const firstLaunch = require('./firstlaunch');
 const autolaunch = require('./autolaunch');
 

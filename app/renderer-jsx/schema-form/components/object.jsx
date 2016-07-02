@@ -14,9 +14,8 @@ class ObjectComponent extends React.Component {
     let title = schema.title || name;
     const description = utils.wrapDescription(schema.description);
 
-    if (title) {
+    if (title)
       title = (<h4>{title}</h4>);
-    }
 
     for (const childName in properties) {
       const property = properties[childName];

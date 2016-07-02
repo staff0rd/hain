@@ -2,7 +2,6 @@
 
 const path = require('path');
 const applicationConfigPath = require('application-config-path');
-const pkgJson = require('../package.json');
 
 const HAIN_USER_PATH = applicationConfigPath('hain-user');
 const LOCAL_STORAGE_DIR = `${HAIN_USER_PATH}/localStorages`;

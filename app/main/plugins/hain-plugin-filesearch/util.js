@@ -3,7 +3,7 @@
 const lo_findIndex = require('lodash.findindex');
 const lo_orderBy = require('lodash.orderby');
 const path = require('path');
-const matchutil = require('../../utils/matchutil');
+const matchutil = require('../../shared/matchutil');
 
 const BASENAME_MATCH_WEIGHT = 2.0;
 

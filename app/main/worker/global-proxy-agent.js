@@ -8,7 +8,7 @@ const http = require('http');
 const https = require('https');
 const url = require('url');
 
-const logger = require('../utils/logger');
+const logger = require('../shared/logger');
 
 const _httpRequest = http.request;
 const _httpsRequest = https.request;

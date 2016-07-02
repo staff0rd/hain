@@ -13,16 +13,15 @@ const co = require('co');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const fileutil = require('../utils/fileutil');
+const fileutil = require('../shared/fileutil');
 
-const schemaDefaults = require('../../utils/schema-defaults');
-
-const matchutil = require('../utils/matchutil');
-const textutil = require('../utils/textutil');
+const matchutil = require('../shared/matchutil');
+const textutil = require('../shared/textutil');
 const iconFmt = require('./icon-fmt');
 const prefStore = require('./pref-store');
-const ObservableObject = require('../common/observable-object');
 const storages = require('./storages');
+const nonce = require('../shared/nonce');
+const PreferencesObject = require('../shared/preferences-object');
 
 const conf = require('../conf');
 
@@ -117,6 +116,7 @@ module.exports = (workerContext) => {
   let plugins = null;
   let pluginConfigs = null;
   let pluginPrefIds = null;
+  const prefObjs = {};
 
   const pluginContextBase = {
     // Plugin Configurations
@@ -144,12 +144,8 @@ module.exports = (workerContext) => {
 
     const hasPreferences = (pluginConfig.prefSchema !== null);
     if (hasPreferences) {
-      const defaults = schemaDefaults(pluginConfig.prefSchema);
-      const saved = prefStore.get(pluginId) || {};
-      prefStore.set(pluginId, lo_assign(defaults, saved));
-
-      const initialPref = prefStore.get(pluginId);
-      preferences = new ObservableObject(initialPref);
+      preferences = new PreferencesObject(prefStore, pluginId, pluginConfig.prefSchema, nonce);
+      prefObjs[pluginId] = preferences;
     }
     return lo_assign({}, pluginContextBase, { localStorage, preferences });
   }
@@ -322,38 +318,28 @@ module.exports = (workerContext) => {
     return pluginPrefIds;
   }
 
-  let tempPrefs = {};
   function getPreferences(prefId) {
-    const prefSchema = pluginConfigs[prefId].prefSchema;
-    const tempPref = tempPrefs[prefId];
+    const prefObj = prefObjs[prefId];
     return {
       prefId,
-      schema: JSON.stringify(prefSchema),
-      model: tempPref || prefStore.get(prefId)
+      schema: JSON.stringify(prefObj.schema),
+      model: prefObj.get()
     };
   }
 
   function updatePreferences(prefId, prefModel) {
-    tempPrefs[prefId] = prefModel;
+    prefObjs[prefId].update(prefModel);
   }
 
   function commitPreferences() {
-    for (const prefId in tempPrefs) {
-      const prefModel = tempPrefs[prefId];
-      const pluginInstance = plugins[prefId];
-      const pluginContext = pluginInstance.__pluginContext;
-
-      pluginContext.preferences.update(prefModel);
-      prefStore.set(prefId, prefModel);
+    for (const prefId in prefObjs) {
+      const prefObj = prefObjs[prefId];
+      prefObj.commit();
     }
-    tempPrefs = {};
   }
 
   function resetPreferences(prefId) {
-    const prefSchema = pluginConfigs[prefId].prefSchema;
-    const pref = schemaDefaults(prefSchema);
-    updatePreferences(prefId, pref);
-    return getPreferences(prefId);
+    return prefObjs[prefId].reset();
   }
 
   return {

@@ -5,14 +5,13 @@ const lo_assign = require('lodash.assign');
 const cp = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const logger = require('../utils/logger');
+const logger = require('../shared/logger');
 const electronApp = require('electron').app;
 
 const rpc = require('./rpc-server');
 const proxyHandler = require('./proxy-handler');
-const pref = require('./pref');
-const asyncutil = require('../utils/asyncutil');
-const toast = require('./toast');
+const pref = require('./app-pref');
+const asyncutil = require('../shared/asyncutil');
 
 let app = null;
 let workerProcess = null;

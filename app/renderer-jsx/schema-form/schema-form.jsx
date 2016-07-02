@@ -16,6 +16,7 @@ componentSelector.inject('string', require('./components/string'));
 componentSelector.inject('integer', require('./components/number'));
 componentSelector.inject('number', require('./components/number'));
 componentSelector.inject('boolean', require('./components/boolean'));
+componentSelector.inject('password', require('./components/password'));
 
 class SchemaForm extends React.Component {
   constructor(props) {

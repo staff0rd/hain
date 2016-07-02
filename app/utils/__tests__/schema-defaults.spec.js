@@ -48,6 +48,13 @@ describe('schema-defaults.js', () => {
       expect(defaults(schema)).toEqual(0);
     });
 
+    it('should return empty string if password type has been provided', () => {
+      const schema = {
+        type: 'password'
+      };
+      expect(defaults(schema)).toEqual('');
+    });
+
     it('should return an array of zero length if array type has provided', () => {
       const schema = {
         type: 'array'

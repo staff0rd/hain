@@ -2,17 +2,18 @@
 'use strict';
 
 const co = require('co');
-const logger = require('../utils/logger');
-const ObservableObject = require('../common/observable-object');
+const logger = require('../shared/logger');
 const globalProxyAgent = require('./global-proxy-agent');
 const procMsg = require('./proc-msg');
 const serverProxy = require('./server-proxy');
+const PreferencesObject = require('../shared/preferences-object');
 
 function ipcPipe(target, channel, msg) {
   procMsg.send('on-ipc-pipe', { target, channel, msg });
 }
 
-const globalPrefObj = new ObservableObject({});
+// Create a local copy of app-pref object
+const globalPrefObj = new PreferencesObject(null, 'global', {}, 'nokey');
 
 const workerContext = {
   app: serverProxy.appProxy,

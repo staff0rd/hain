@@ -10,7 +10,7 @@ function defaults(schema) {
     return schema.enum[0];
 
   const type = schema.type;
-  if (type === 'string')
+  if (type === 'string' || type === 'password')
     return '';
   else if (type === 'integer' || type === 'number')
     return 0;
