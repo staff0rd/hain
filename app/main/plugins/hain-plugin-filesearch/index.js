@@ -10,6 +10,7 @@ const readdir = require('./readdir');
 const util = require('./util');
 
 const RECENT_ITEM_COUNT = 100;
+const RECENT_ITEM_RATIO = 1.5;
 
 const matchFunc = (filePath, stats) => {
   const ext = path.extname(filePath).toLowerCase();
@@ -122,17 +123,16 @@ module.exports = (context) => {
     });
   }
 
-  function _fuzzyResultToSearchResult(results, group, fixedScore) {
-    const _group = group || 'Files & Folders';
+  function _fuzzyResultToSearchResult(results, ratio = 1) {
     return results.map(x => {
       const path_base64 = new Buffer(x.path).toString('base64');
-      const score = (fixedScore !== undefined) ? fixedScore : x.score;
+      const score = x.score * ratio;
       return {
         id: x.path,
         title: path.basename(x.path, path.extname(x.path)),
         desc: x.html,
         icon: `icon://${path_base64}`,
-        group: _group,
+        group: 'Files & Folders',
         score
       };
     });
@@ -143,15 +143,9 @@ module.exports = (context) => {
     const recentFuzzyResults = util.fuzzy(_recentUsedItems, query_trim).slice(0, 2);
     const defaultFuzzyResults = util.fuzzy(db, query_trim).slice(0, 10);
 
-    let highestScore = 0.15;
-    if (defaultFuzzyResults.length > 0)
-      highestScore = defaultFuzzyResults[0].score;
-
     let recentSearchResults = [];
-    if (recentFuzzyResults.length > 0) {
-      highestScore = Math.max(highestScore, recentFuzzyResults[0].score);
-      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, 'Recent Items', highestScore);
-    }
+    if (recentFuzzyResults.length > 0)
+      recentSearchResults = _fuzzyResultToSearchResult(recentFuzzyResults, RECENT_ITEM_RATIO);
 
     // Reject if it is duplicated with recent items
     const sanitizedFuzzyResults = lo_reject(defaultFuzzyResults, x => lo_findIndex(recentFuzzyResults, { path: x.path }) >= 0);
