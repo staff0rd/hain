@@ -54,9 +54,6 @@ function launch() {
     });
   });
 
-  electronApp.on('will-quit', () => {
-    shortcut.clearShortcut();
-  });
   iconProtocol.register();
 }
 
