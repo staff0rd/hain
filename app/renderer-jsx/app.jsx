@@ -1,4 +1,3 @@
-/* global $ */
 'use strict';
 
 const lo_orderBy = require('lodash.orderby');
@@ -12,11 +11,10 @@ const lo_assign = require('lodash.assign');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const RPCRenderer = require('./rpc-renderer');
-const rpc = new RPCRenderer('mainwindow');
 const remote = require('electron').remote;
+const ipc = require('electron').ipcRenderer;
 
-const textUtil = require('./text-util');
+const textUtil = require('../main/shared/text-util');
 
 const Ticket = require('./ticket');
 const searchTicket = new Ticket();
@@ -60,7 +58,7 @@ class AppContainer extends React.Component {
       return;
     }
     const contents = this.toastQueue.shift();
-    const message = contents.message;
+    const message = textUtil.sanitize(contents.message);
     const duration = contents.duration || 2000;
     this.setState({ toastMessage: message, toastOpen: true });
     this.autoHideToast(duration);
@@ -75,26 +73,25 @@ class AppContainer extends React.Component {
 
   componentDidMount() {
     this.refs.query.focus();
-    rpc.connect();
-    rpc.on('on-load', (evt, msg) => {
+    ipc.on('notify-plugins-loaded', (evt, msg) => {
       this.isLoaded = true;
       this.setQuery('', true);
     });
-    rpc.on('on-reloading', (evt, msg) => {
+    ipc.on('notify-plugins-reloading', (evt, msg) => {
       this.isLoaded = false;
       this.forceUpdate();
     });
-    rpc.on('on-toast', (evt, msg) => {
+    ipc.on('enqueue-toast', (evt, msg) => {
       const { message, duration } = msg;
       this.toastQueue.push({ message, duration });
     });
-    rpc.on('on-log', (evt, msg) => {
+    ipc.on('log', (evt, msg) => {
       console.log(msg);
     });
-    rpc.on('set-query', (evt, args) => {
+    ipc.on('set-query', (evt, args) => {
       this.setQuery(args);
     });
-    rpc.on('on-result', (evt, msg) => {
+    ipc.on('request-add-results', (evt, msg) => {
       const { ticket, type, payload } = msg;
       if (searchTicket.current !== ticket)
         return;
@@ -131,7 +128,7 @@ class AppContainer extends React.Component {
 
       this.setState({ results, selectionIndex });
     });
-    rpc.on('on-render-preview', (evt, msg) => {
+    ipc.on('request-render-preview', (evt, msg) => {
       const { ticket, html } = msg;
       if (previewTicket.current !== ticket)
         return;
@@ -176,7 +173,7 @@ class AppContainer extends React.Component {
 
     clearTimeout(this.lastSearchTimer);
     this.lastSearchTimer = setTimeout(() => {
-      rpc.send('search', { ticket, query });
+      ipc.send('search', { ticket, query });
     }, SEND_INTERVAL);
     clearTimeout(this.lastClearTimer);
     this.lastClearTimer = setTimeout(() => {
@@ -194,7 +191,7 @@ class AppContainer extends React.Component {
       id: item.id,
       payload: item.payload
     };
-    rpc.call('execute', params);
+    ipc.send('execute', params);
   }
 
   updatePreview() {
@@ -215,7 +212,7 @@ class AppContainer extends React.Component {
     this._renderedPreviewHash = previewHash;
 
     const ticket = previewTicket.newTicket();
-    rpc.send('renderPreview', { ticket, pluginId, id, payload });
+    ipc.send('renderPreview', { ticket, pluginId, id, payload });
   }
 
   handleSelection(selectionDelta) {
@@ -235,7 +232,7 @@ class AppContainer extends React.Component {
   handleEsc() {
     const query = this.state.query;
     if (query === undefined || query.length <= 0) {
-      rpc.call('close');
+      ipc.call('close');
       return;
     }
     this.setQuery('');
@@ -343,7 +340,7 @@ class AppContainer extends React.Component {
     const pluginId = result.pluginId;
     const id = result.id;
     const payload = result.payload;
-    rpc.send('buttonAction', { pluginId, id, payload });
+    ipc.send('buttonAction', { pluginId, id, payload });
   }
 
   parseIconUrl(iconUrl) {

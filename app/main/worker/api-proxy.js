@@ -3,12 +3,12 @@
 const procMsg = require('./proc-msg');
 const logger = require('../shared/logger');
 
-function call(service, func, args) {
-  procMsg.send('proxy', { service, func, args });
+function call(moduleName, funcName, payload) {
+  procMsg.send('call-api', { moduleName, funcName, payload });
 }
 
-function wrapFunc(service) {
-  return (func, args) => call(service, func, args);
+function wrapFunc(moduleName) {
+  return (func, args) => call(moduleName, func, args);
 }
 
 const app_func = wrapFunc('app');
@@ -38,7 +38,7 @@ const shellProxy = {
 const logger_func = wrapFunc('logger');
 const loggerProxy = {
   log: (msg) => {
-    logger.log(msg);
+    logger.debug(msg);
     logger_func('log', msg);
   }
 };

@@ -1,7 +1,7 @@
 'use strict';
 
-function send(type, payload) {
-  process.send({ type, payload });
+function send(channel, payload) {
+  process.send({ channel, payload });
 }
 
 module.exports = { send };
