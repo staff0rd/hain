@@ -8,7 +8,7 @@ const regKey = new Registry({
 
 const VALUE_NAME = 'Hain';
 
-module.exports = class AutoLaunchService {
+module.exports = class AutoLaunch {
   constructor() {
     this.isActivated = false;
   }

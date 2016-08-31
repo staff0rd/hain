@@ -4,12 +4,11 @@ const electron = require('electron');
 const shell = electron.shell;
 const BrowserWindow = electron.BrowserWindow;
 const windowUtil = require('./window-util');
-const EventEmitter = require('events');
 
-module.exports = class PrefWindow extends EventEmitter {
+const ipc = electron.ipcMain;
+
+module.exports = class PrefWindow {
   constructor() {
-    super();
-
     this.browserWindow = null;
   }
   show(prefId) {
@@ -48,5 +47,11 @@ module.exports = class PrefWindow extends EventEmitter {
     if (prefId)
       return `${baseUrl}#${prefId}`;
     return baseUrl;
+  }
+  _send(channel, msg) {
+    this.browserWindow.webContents.send(channel, msg);
+  }
+  _on(channel, listener) {
+    ipc.on(channel, (evt, msg) => listener(msg));
   }
 };

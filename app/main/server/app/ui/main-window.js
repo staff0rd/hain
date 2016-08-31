@@ -7,9 +7,14 @@ const BrowserWindow = electron.BrowserWindow;
 const platformUtil = require('../../../../platform-util');
 const windowUtil = require('./window-util');
 
+const ipc = electron.ipcMain;
+const RpcChannel = require('../../../shared/rpc-channel');
+
 module.exports = class MainWindow {
-  constructor() {
+  constructor(workerProxy) {
+    this.workerProxy = workerProxy;
     this.browserWindow = null;
+    this.rpc = null;
   }
   createWindow(onComplete) {
     const browserWindow = new BrowserWindow({
@@ -42,6 +47,33 @@ module.exports = class MainWindow {
     });
 
     this.browserWindow = browserWindow;
+    this.rpc = RpcChannel.create(this._send.bind(this), this._on.bind(this));
+    this.setupHandlers();
+  }
+  _send(channel, msg) {
+    this.browserWindow.webContents.send(channel, msg);
+  }
+  _on(channel, listener) {
+    ipc.on(channel, (evt, msg) => listener(msg));
+  }
+  setupHandlers() {
+    this.rpc.define('search', (payload) => {
+      const { ticket, query } = payload;
+      this.workerProxy.searchAll(ticket, query);
+    });
+    this.rpc.define('execute', (__payload) => {
+      const { pluginId, id, payload } = __payload;
+      this.workerProxy.execute(pluginId, id, payload);
+    });
+    this.rpc.define('renderPreview', (__payload) => {
+      const { ticket, pluginId, id, payload } = __payload;
+      this.workerProxy.renderPreview(ticket, pluginId, id, payload);
+    });
+    this.rpc.define('buttonAction', (__payload) => {
+      const { pluginId, id, payload } = __payload;
+      this.workerProxy.buttonAction(pluginId, id, payload);
+    });
+    this.rpc.define('close', () => this.hide());
   }
   show() {
     if (this.browserWindow === null)
@@ -50,9 +82,6 @@ module.exports = class MainWindow {
     platformUtil.saveFocus();
     windowUtil.centerWindowOnSelectedScreen(this.browserWindow);
     this.browserWindow.show();
-  }
-  setQuery(query) {
-    this.browserWindow.webContents.send('set-query', query);
   }
   hide(dontRestoreFocus) {
     if (this.browserWindow === null)
@@ -75,23 +104,26 @@ module.exports = class MainWindow {
         this.setQuery(query);
     }
   }
+  setQuery(query) {
+    this.rpc.call('setQuery', query);
+  }
   enqueueToast(message, duration) {
-    this.browserWindow.webContents.send('enqueue-toast', { message, duration });
+    this.rpc.call('enqueueToast', { message, duration });
   }
   log(msg) {
-    this.browserWindow.webContents.send('log', msg);
+    this.rpc.call('log', msg);
   }
   requestAddResults(ticket, type, payload) {
-    this.browserWindow.webContents.send('request-add-results', { ticket, type, payload });
+    this.rpc.call('requestAddResults', { ticket, type, payload });
   }
   requestRenderPreview(ticket, html) {
-    this.browserWindow.webContents.send('request-render-preview', { ticket, html });
+    this.rpc.call('requestRenderPreview', { ticket, html });
   }
   notifyPluginsLoaded() {
-    this.browserWindow.webContents.send('notify-plugins-loaded');
+    this.rpc.call('notifyPluginsLoaded');
   }
   notifyPluginsReloading() {
-    this.browserWindow.webContents.send('notify-plugins-reloading');
+    this.rpc.call('notifyPluginsReloading');
   }
   isContentLoading() {
     return this.browserWindow.webContents.isLoading();

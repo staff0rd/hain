@@ -7,7 +7,7 @@ const cp = require('child_process');
 const electron = require('electron');
 const electronApp = electron.app;
 
-const AutoLaunchService = require('./auto-launch-service');
+const AutoLaunch = require('./auto-launch');
 const MainWindow = require('./ui/main-window');
 const PrefWindow = require('./ui/pref-window');
 const TrayService = require('./ui/tray-service');
@@ -17,23 +17,22 @@ const ShortcutService = require('./shortcut-service');
 const iconProtocol = require('./icon-protocol');
 
 module.exports = class AppService {
-  constructor(prefManager, workerService) {
+  constructor(appPref, workerClient, workerProxy) {
     this._isRestarting = false;
 
-    this.prefManager = prefManager;
-    this.appPref = prefManager.getPref('hain');
-    this.autoLaunchService = new AutoLaunchService();
-    this.mainWindow = new MainWindow();
+    this.appPref = appPref;
+    this.autoLaunch = new AutoLaunch();
+    this.mainWindow = new MainWindow(workerProxy);
     this.prefWindow = new PrefWindow();
-    this.trayService = new TrayService(this, this.autoLaunchService);
-    this.shortcutService = new ShortcutService(this, this.appPref);
-    this.workerService = workerService;
+    this.trayService = new TrayService(this, this.autoLaunch);
+    this.shortcutService = new ShortcutService(this, appPref);
+    this.workerClient = workerClient;
   }
   initializeAndLaunch() {
     const self = this;
     return co(function* () {
       if (firstLaunch.isFirstLaunch)
-        self.autoLaunchService.activate();
+        self.autoLaunch.activate();
 
       const isRestarted = (lo_includes(process.argv, '--restarted'));
       const silentLaunch = (lo_includes(process.argv, '--silent'));
@@ -55,11 +54,11 @@ module.exports = class AppService {
           if (isRestarted)
             self.mainWindow.enqueueToast('Restarted');
         });
-
         iconProtocol.register();
       });
+      // TODO 위 createTray가 먼저 실행될 가능성이 있음
 
-      yield self.autoLaunchService.initialize();
+      yield self.autoLaunch.initialize();
     }).catch((err) => {
       console.log(err);
     });
@@ -90,7 +89,8 @@ module.exports = class AppService {
     this.prefWindow.show(prefId);
   }
   reloadPlugins() {
-    this.workerService.reloadWorker();
+    this.workerClient.reloadWorker();
+    this.workerProxy.initialize(this.appPref.get());
     this.mainWindow.setQuery('');
     this.mainWindow.notifyPluginsReloading();
   }

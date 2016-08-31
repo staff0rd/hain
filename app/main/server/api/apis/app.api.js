@@ -14,7 +14,7 @@ module.exports = class AppAPI {
     this.appService.open(query);
   }
   close(dontRestoreFocus) {
-    this.appService.mainWindow.close(dontRestoreFocus);
+    this.appService.mainWindow.hide(dontRestoreFocus);
   }
   setQuery(query) {
     this.appService.mainWindow.setQuery(query);

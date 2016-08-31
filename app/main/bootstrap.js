@@ -20,7 +20,7 @@
     dialog.showErrorBox('Hain', `Unhandled Error: ${e.stack || e}`);
   });
 
-  const Server = require('./server/server');
+  const Server = require('./server');
   const server = new Server();
   server.launch()
     .catch((e) => {

@@ -19,7 +19,6 @@ module.exports = class ShortcutService {
     this.registerCustomQueryShortcuts();
   }
   registerBasicToggleShortcut() {
-    // TODO appPref에 get(path) 함수 추가하기
     const shortcut = this.appPref.get('shortcut');
     const query = this.appPref.get('clearQuery') ? '' : undefined;
     try {
@@ -46,12 +45,6 @@ module.exports = class ShortcutService {
   _registerShortcut(shortcut, query) {
     globalShortcut.register(shortcut, () => {
       this.appService.mainWindow.toggle(query);
-      // if (mainWindow.isContentLoading())
-      //   return;
-      // mainWindow.toggleWindow();
-
-      // if (query !== undefined && mainWindow.isVisible())
-      //   mainWindow.setQuery(query);
     });
   }
 };

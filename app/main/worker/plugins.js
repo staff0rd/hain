@@ -275,6 +275,7 @@ module.exports = (workerContext) => {
         workerContext.app.setQuery(payload);
       return;
     }
+
     const executeFunc = plugins[pluginId].execute;
     if (executeFunc === undefined)
       return;

@@ -1,10 +1,10 @@
 'use strict';
 
-const procMsg = require('./proc-msg');
 const logger = require('../shared/logger');
+const rpc = require('./rpc');
 
 function call(moduleName, funcName, payload) {
-  procMsg.send('call-api', { moduleName, funcName, payload });
+  rpc.call('callApi', { moduleName, funcName, payload });
 }
 
 function wrapFunc(moduleName) {

@@ -3,47 +3,47 @@
 const co = require('co');
 const logger = require('../shared/logger');
 const globalProxyAgent = require('./global-proxy-agent');
-const procMsg = require('./proc-msg');
 const apiProxy = require('./api-proxy');
 const PreferencesObject = require('../shared/preferences-object');
 
+const rpc = require('./rpc');
+
 // Create a local copy of app-pref object
-const globalPrefObj = new PreferencesObject(null, 'global', {});
+const appPrefCopy = new PreferencesObject(null, 'hain', {});
 
 const workerContext = {
   app: apiProxy.appProxy,
   toast: apiProxy.toastProxy,
   shell: apiProxy.shellProxy,
   logger: apiProxy.loggerProxy,
-  globalPreferences: globalPrefObj
+  globalPreferences: appPrefCopy
 };
 
 let plugins = null;
-const workerExports = {};
 
 function handleExceptions() {
   process.on('uncaughtException', (err) => logger.error(err));
 }
 
-workerExports.initialize = function (payload) {
+rpc.define('initialize', (payload) => {
+  const { initialAppPref } = payload;
   return co(function* () {
     handleExceptions();
-    // TODO 주석 풀기
-    // globalPrefObj.update({});
-    // globalProxyAgent.initialize(globalPrefObj);
+    // appPrefCopy.update(initialAppPref);
+    // globalProxyAgent.initialize(appPrefCopy);
 
     plugins = require('./plugins')(workerContext);
     yield* plugins.initialize();
 
-    procMsg.send('notify-plugins-loaded');
+    rpc.call('notifyPluginsLoaded');
   }).catch((e) => {
     const err = e.stack || e;
-    procMsg.send('on-error', err);
+    rpc.call('onError', err);
     logger.error(err);
   });
-};
+});
 
-workerExports.searchAll = function (payload) {
+rpc.define('searchAll', (payload) => {
   const { query, ticket } = payload;
   const resFunc = (obj) => {
     const resultData = {
@@ -51,43 +51,29 @@ workerExports.searchAll = function (payload) {
       type: obj.type,
       payload: obj.payload
     };
-    procMsg.send('request-add-results', resultData);
+    rpc.call('requestAddResults', resultData);
   };
   plugins.searchAll(query, resFunc);
-};
+});
 
-workerExports.execute = function (__payload) {
+rpc.define('execute', (__payload) => {
   const { pluginId, id, payload } = __payload;
   plugins.execute(pluginId, id, payload);
-};
+});
 
-workerExports.renderPreview = function (__payload) {
+rpc.define('renderPreview', (__payload) => {
   const { ticket, pluginId, id, payload } = __payload;
   const render = (html) => {
     const previewData = { ticket, html };
-    procMsg.send('request-render-preview', previewData);
+    rpc.call('requestRenderPreview', previewData);
   };
   plugins.renderPreview(pluginId, id, payload, render);
-};
+});
 
-workerExports.buttonAction = function (__payload) {
+rpc.define('buttonAction', (__payload) => {
   const { pluginId, id, payload } = __payload;
   plugins.buttonAction(pluginId, id, payload);
-};
-
-function handleProcessMessage(msg) {
-  try {
-    const { channel, payload } = msg;
-    const exportFunc = workerExports[channel];
-    exportFunc(payload);
-  } catch (e) {
-    const err = e.stack || e;
-    procMsg.send('on-error', err);
-    logger.error(err);
-  }
-}
-
-process.on('message', handleProcessMessage);
+});
 
 // const msgHandlers = {
 //   execute: (_payload) => {

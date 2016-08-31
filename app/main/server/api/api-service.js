@@ -12,12 +12,12 @@ module.exports = class ApiService {
     const apiContext = {
       appService: this.appService
     };
-    const moduleFiles = fs.readdirSync(`${__dirname}/api`);
+    const moduleFiles = fs.readdirSync(`${__dirname}/apis`);
     for (const moduleFile of moduleFiles) {
       if (!moduleFile.endsWith('.api.js'))
         continue;
       const moduleName = moduleFile.substring(0, moduleFile.length - 7 /* length .api.js */).toLowerCase();
-      const ModuleClass = require(`./api/${moduleFile}`);
+      const ModuleClass = require(`./apis/${moduleFile}`);
       if (ModuleClass === undefined) {
         logger.error(`ApiService: Can't load the module: ${moduleFile}`);
         continue;

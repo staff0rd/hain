@@ -8,30 +8,29 @@ module.exports = class WorkerHandler {
     this.appService = appService;
     this.apiService = apiService;
   }
-  setupHandlers() {
-    const worker = this.workerClient;
-
-    worker.on('on-error', this.handle_on_error.bind(this));
-    worker.on('call-api', this.handle_call_api.bind(this));
-    worker.on('notify-plugins-loaded', this.handle_notify_plugins_loaded.bind(this));
-    worker.on('request-add-results', this.handle_request_add_results.bind(this));
-    worker.on('request-render-preview', this.handle_request_render_preview.bind(this));
+  initialize() {
+    const rpc = this.workerClient.rpc;
+    rpc.define('onError', this.handleOnError.bind(this));
+    rpc.define('callApi', this.handleCallApi.bind(this));
+    rpc.define('notifyPluginsLoaded', this.handleNotifyPluginsLoaded.bind(this));
+    rpc.define('requestAddResults', this.handleRequestAddResults.bind(this));
+    rpc.define('requestRenderPreview', this.handleRequestRenderPreview.bind(this));
   }
-  handle_on_error(payload) {
+  handleOnError(payload) {
     logger.error(`Unhandled Plugin Error: ${payload}`);
   }
-  handle_call_api(__payload) {
+  handleCallApi(__payload) {
     const { moduleName, funcName, payload } = __payload;
     this.apiService.callApi(moduleName, funcName, payload);
   }
-  handle_notify_plugins_loaded(payload) {
+  handleNotifyPluginsLoaded(payload) {
     this.appService.mainWindow.notifyPluginsLoaded();
   }
-  handle_request_add_results(__payload) {
+  handleRequestAddResults(__payload) {
     const { ticket, type, payload } = __payload;
     this.appService.mainWindow.requestAddResults(ticket, type, payload);
   }
-  handle_request_render_preview(payload) {
+  handleRequestRenderPreview(payload) {
     const { ticket, html } = payload;
     this.appService.mainWindow.requestRenderPreview(ticket, html);
   }

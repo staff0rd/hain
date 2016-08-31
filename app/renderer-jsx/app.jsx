@@ -14,6 +14,9 @@ const ReactDOM = require('react-dom');
 const remote = require('electron').remote;
 const ipc = require('electron').ipcRenderer;
 
+const RpcChannel = require('../main/shared/rpc-channel');
+const rpc = RpcChannel.createWithIpcRenderer(ipc);
+
 const textUtil = require('../main/shared/text-util');
 
 const Ticket = require('./ticket');
@@ -73,26 +76,26 @@ class AppContainer extends React.Component {
 
   componentDidMount() {
     this.refs.query.focus();
-    ipc.on('notify-plugins-loaded', (evt, msg) => {
+    rpc.define('notifyPluginsLoaded', (payload) => {
       this.isLoaded = true;
       this.setQuery('', true);
     });
-    ipc.on('notify-plugins-reloading', (evt, msg) => {
+    rpc.define('notifyPluginsReloading', (payload) => {
       this.isLoaded = false;
       this.forceUpdate();
     });
-    ipc.on('enqueue-toast', (evt, msg) => {
-      const { message, duration } = msg;
+    rpc.define('enqueueToast', (payload) => {
+      const { message, duration } = payload;
       this.toastQueue.push({ message, duration });
     });
-    ipc.on('log', (evt, msg) => {
-      console.log(msg);
+    rpc.define('log', (payload) => {
+      console.log(payload);
     });
-    ipc.on('set-query', (evt, args) => {
-      this.setQuery(args);
+    rpc.define('setQuery', (payload) => {
+      this.setQuery(payload);
     });
-    ipc.on('request-add-results', (evt, msg) => {
-      const { ticket, type, payload } = msg;
+    rpc.define('requestAddResults', (__payload) => {
+      const { ticket, type, payload } = __payload;
       if (searchTicket.current !== ticket)
         return;
 
@@ -128,8 +131,8 @@ class AppContainer extends React.Component {
 
       this.setState({ results, selectionIndex });
     });
-    ipc.on('request-render-preview', (evt, msg) => {
-      const { ticket, html } = msg;
+    rpc.define('requestRenderPreview', (payload) => {
+      const { ticket, html } = payload;
       if (previewTicket.current !== ticket)
         return;
       if (this.state.previewHtml === html)
@@ -173,7 +176,7 @@ class AppContainer extends React.Component {
 
     clearTimeout(this.lastSearchTimer);
     this.lastSearchTimer = setTimeout(() => {
-      ipc.send('search', { ticket, query });
+      rpc.call('search', { ticket, query });
     }, SEND_INTERVAL);
     clearTimeout(this.lastClearTimer);
     this.lastClearTimer = setTimeout(() => {
@@ -191,7 +194,7 @@ class AppContainer extends React.Component {
       id: item.id,
       payload: item.payload
     };
-    ipc.send('execute', params);
+    rpc.call('execute', params);
   }
 
   updatePreview() {
@@ -212,7 +215,7 @@ class AppContainer extends React.Component {
     this._renderedPreviewHash = previewHash;
 
     const ticket = previewTicket.newTicket();
-    ipc.send('renderPreview', { ticket, pluginId, id, payload });
+    rpc.call('renderPreview', { ticket, pluginId, id, payload });
   }
 
   handleSelection(selectionDelta) {
@@ -232,7 +235,7 @@ class AppContainer extends React.Component {
   handleEsc() {
     const query = this.state.query;
     if (query === undefined || query.length <= 0) {
-      ipc.call('close');
+      rpc.call('close');
       return;
     }
     this.setQuery('');
@@ -340,7 +343,7 @@ class AppContainer extends React.Component {
     const pluginId = result.pluginId;
     const id = result.id;
     const payload = result.payload;
-    ipc.send('buttonAction', { pluginId, id, payload });
+    rpc.call('buttonAction', { pluginId, id, payload });
   }
 
   parseIconUrl(iconUrl) {

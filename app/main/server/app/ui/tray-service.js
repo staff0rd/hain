@@ -7,18 +7,18 @@ const Menu = electron.Menu;
 const path = require('path');
 
 module.exports = class TrayService {
-  constructor(appService, autoLaunchService) {
+  constructor(appService, autoLaunch) {
     this.tray = null;
 
     this.appService = appService;
-    this.autoLaunchService = autoLaunchService;
+    this.autoLaunch = autoLaunch;
   }
   createTray() {
     const iconPath = process.platform !== 'linux' ?
       path.normalize(`${__dirname}/../../../../images/tray_16.ico`) :
       path.normalize(`${__dirname}/../../../../images/hain.png`);
 
-    const autoLaunchActivated = this.autoLaunchService.isActivated;
+    const autoLaunchActivated = this.autoLaunch.isActivated;
     const tray = new Tray(iconPath);
     const menu = Menu.buildFromTemplate([
       {
@@ -26,7 +26,7 @@ module.exports = class TrayService {
       },
       {
         label: 'Auto-launch', type: 'checkbox', checked: autoLaunchActivated,
-        click: () => this.autoLaunchService.toggle()
+        click: () => this.autoLaunch.toggle()
       },
       {
         type: 'separator'
