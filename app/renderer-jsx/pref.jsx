@@ -17,7 +17,7 @@ const SelectableList = SelectableContainerEnhance(List);
 
 const ipc = require('electron').ipcRenderer;
 const RpcChannel = require('../main/shared/rpc-channel');
-const rpc = RpcChannel.withBrowserIpc(ipc);
+const rpc = RpcChannel.createWithIpcRenderer('#prefWindow', ipc);
 
 class Preferences extends React.Component {
   constructor() {
@@ -71,10 +71,10 @@ class Preferences extends React.Component {
         this.selectPref(prefItems[activeIndex].id);
       });
   }
-  selectPref(__prefId) {
-    rpc.call('getPreferences', { prefId: __prefId })
+  selectPref(prefId) {
+    rpc.call('getPreferences', { prefId })
       .then((result) => {
-        const { prefId, schema, model } = result;
+        const { schema, model } = result;
         this.setState({
           selectedPrefId: prefId,
           schema: JSON.parse(schema),
@@ -87,7 +87,7 @@ class Preferences extends React.Component {
     this.selectPref(value);
   }
   handleResetAll(evt) {
-    rpc.call('resetPreferences', this.state.selectedPrefId);
+    rpc.call('resetPreferences', { prefId: this.state.selectedPrefId });
   }
   render() {
     const listItems = [];

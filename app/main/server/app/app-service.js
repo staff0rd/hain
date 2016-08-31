@@ -23,7 +23,7 @@ module.exports = class AppService {
     this.appPref = appPref;
     this.autoLaunch = new AutoLaunch();
     this.mainWindow = new MainWindow(workerProxy);
-    this.prefWindow = new PrefWindow();
+    this.prefWindow = new PrefWindow(workerProxy);
     this.trayService = new TrayService(this, this.autoLaunch);
     this.shortcutService = new ShortcutService(this, appPref);
     this.workerClient = workerClient;
@@ -46,7 +46,6 @@ module.exports = class AppService {
         return electronApp.quit();
 
       electronApp.on('ready', () => {
-        self.trayService.createTray();
         self.shortcutService.initializeShortcuts();
         self.mainWindow.createWindow(() => {
           if (!silentLaunch || isRestarted)
@@ -54,11 +53,11 @@ module.exports = class AppService {
           if (isRestarted)
             self.mainWindow.enqueueToast('Restarted');
         });
+
+        self.autoLaunch.loadPreviousSetings();
+        self.trayService.createTray();
         iconProtocol.register();
       });
-      // TODO 위 createTray가 먼저 실행될 가능성이 있음
-
-      yield self.autoLaunch.initialize();
     }).catch((err) => {
       console.log(err);
     });

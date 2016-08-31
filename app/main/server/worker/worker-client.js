@@ -13,7 +13,7 @@ module.exports = class WorkerClient extends EventEmitter {
     super();
 
     this.workerProcess = null;
-    this.rpc = RpcChannel.create(this.send.bind(this), this.on.bind(this));
+    this.rpc = RpcChannel.create('#worker', this.send.bind(this), this.on.bind(this));
   }
   reloadWorker() {
     logger.debug('WorkerWrapper: reloading worker');

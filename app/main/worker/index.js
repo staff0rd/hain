@@ -26,11 +26,11 @@ function handleExceptions() {
 }
 
 rpc.define('initialize', (payload) => {
-  const { initialAppPref } = payload;
+  const { appPref } = payload;
   return co(function* () {
     handleExceptions();
-    // appPrefCopy.update(initialAppPref);
-    // globalProxyAgent.initialize(appPrefCopy);
+    appPrefCopy.update(appPref);
+    globalProxyAgent.initialize(appPrefCopy);
 
     plugins = require('./plugins')(workerContext);
     yield* plugins.initialize();
@@ -75,36 +75,31 @@ rpc.define('buttonAction', (__payload) => {
   plugins.buttonAction(pluginId, id, payload);
 });
 
-// const msgHandlers = {
-//   execute: (_payload) => {
-//   },
-//   renderPreview: (_payload) => {
-//   },
-//   buttonAction: (_payload) => {
-//   },
-//   getPluginPrefIds: (payload) => {
-//     const prefIds = plugins.getPrefIds();
-//     procMsg.send('on-get-plugin-pref-ids', prefIds);
-//   },
-//   getPreferences: (payload) => {
-//     const prefId = payload;
-//     const pref = plugins.getPreferences(prefId);
-//     procMsg.send('on-get-preferences', pref);
-//   },
-//   updatePreferences: (payload) => {
-//     const { prefId, model } = payload;
-//     plugins.updatePreferences(prefId, model);
-//   },
-//   commitPreferences: (payload) => {
-//     plugins.commitPreferences();
-//   },
-//   resetPreferences: (payload) => {
-//     const prefId = payload;
-//     const pref = plugins.resetPreferences(prefId);
-//     procMsg.send('on-get-preferences', pref);
-//   },
-//   updateGlobalPreferences: (payload) => {
-//     const model = payload;
-//     globalPrefObj.update(model);
-//   }
-// };
+// preferences
+rpc.define('getPluginPrefIds', () => {
+  return plugins.getPrefIds();
+});
+
+rpc.define('getPreferences', (payload) => {
+  const { prefId } = payload;
+  return plugins.getPreferences(prefId);
+});
+
+rpc.define('updatePreferences', (payload) => {
+  const { prefId, model } = payload;
+  plugins.updatePreferences(prefId, model);
+});
+
+rpc.define('resetPreferences', (payload) => {
+  const { prefId } = payload;
+  plugins.resetPreferences(prefId);
+});
+
+rpc.define('commitPreferences', () => {
+  plugins.commitPreferences();
+});
+
+rpc.define('updateAppPreferences', (payload) => {
+  const { model } = payload;
+  appPrefCopy.update(model);
+});

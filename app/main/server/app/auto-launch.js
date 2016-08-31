@@ -12,11 +12,13 @@ module.exports = class AutoLaunch {
   constructor() {
     this.isActivated = false;
   }
-  initialize() {
+  loadPreviousSetings() {
     return new Promise((resolve, reject) => {
       regKey.get(VALUE_NAME, (err, item) => {
-        if (err)
+        if (err) {
+          console.log(err);
           return reject(err);
+        }
         this.isActivated = (item !== null);
         resolve();
       });

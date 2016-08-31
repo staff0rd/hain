@@ -6,15 +6,16 @@ const BrowserWindow = electron.BrowserWindow;
 
 const platformUtil = require('../../../../platform-util');
 const windowUtil = require('./window-util');
+const RpcChannel = require('../../../shared/rpc-channel');
 
 const ipc = electron.ipcMain;
-const RpcChannel = require('../../../shared/rpc-channel');
 
 module.exports = class MainWindow {
   constructor(workerProxy) {
     this.workerProxy = workerProxy;
     this.browserWindow = null;
-    this.rpc = null;
+    this.rpc = RpcChannel.create('#mainWindow', this._send.bind(this), this._on.bind(this));
+    this._setupHandlers();
   }
   createWindow(onComplete) {
     const browserWindow = new BrowserWindow({
@@ -47,8 +48,6 @@ module.exports = class MainWindow {
     });
 
     this.browserWindow = browserWindow;
-    this.rpc = RpcChannel.create(this._send.bind(this), this._on.bind(this));
-    this.setupHandlers();
   }
   _send(channel, msg) {
     this.browserWindow.webContents.send(channel, msg);
@@ -56,7 +55,7 @@ module.exports = class MainWindow {
   _on(channel, listener) {
     ipc.on(channel, (evt, msg) => listener(msg));
   }
-  setupHandlers() {
+  _setupHandlers() {
     this.rpc.define('search', (payload) => {
       const { ticket, query } = payload;
       this.workerProxy.searchAll(ticket, query);

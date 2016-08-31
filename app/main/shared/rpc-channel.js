@@ -3,17 +3,16 @@
 const uuid = require('uuid');
 const logger = require('./logger');
 
-const RPC_CHANNEL = '#rpc';
-
 class RpcChannel {
-  constructor(send, listen) {
+  constructor(channel, send, listen) {
+    this.channel = channel;
     this.send = send;
     this.topicFuncs = {};
     this.waitingHandlers = {};
     this._startListen(listen);
   }
   _startListen(listen) {
-    listen(RPC_CHANNEL, (msg) => {
+    listen(this.channel, (msg) => {
       const msgType = msg.type;
       if (msgType === 'return') {
         this._handleReturnMessage(msg);
@@ -25,6 +24,9 @@ class RpcChannel {
   _handleReturnMessage(msg) {
     const { id, error } = msg;
     const waitingHandler = this.waitingHandlers[id];
+    if (waitingHandler === undefined)
+      return;
+
     if (error !== undefined) {
       waitingHandler.reject(error);
       delete this.waitingHandlers[id];
@@ -39,7 +41,7 @@ class RpcChannel {
     const { id, topic, payload } = msg;
     const topicFunc = this.topicFuncs[topic];
     if (topicFunc === undefined) {
-      this.send(RPC_CHANNEL, { type: 'return', id, error: 'no_func' });
+      this.send(this.channel, { type: 'return', id, error: 'no_func' });
       return;
     }
 
@@ -48,28 +50,28 @@ class RpcChannel {
       result = topicFunc(payload);
     } catch (e) {
       logger.error(e);
-      this.send(RPC_CHANNEL, { type: 'return', id, error: e });
+      this.send(this.channel, { type: 'return', id, error: e });
       return;
     }
 
     const isPromise = (result && typeof result.then === 'function');
     if (!isPromise) {
-      this.send(RPC_CHANNEL, { type: 'return', id, result });
+      this.send(this.channel, { type: 'return', id, result });
       return;
     }
 
     result
-      .then((x) => this.send(RPC_CHANNEL, { type: 'return', id, result: x }))
+      .then((x) => this.send(this.channel, { type: 'return', id, result: x }))
       .catch((e) => {
         logger.error(e);
-        this.send(RPC_CHANNEL, { type: 'return', id, error: e });
+        this.send(this.channel, { type: 'return', id, error: e });
       });
   }
   call(topic, payload) {
     const id = uuid.v4();
     return new Promise((resolve, reject) => {
       this.waitingHandlers[id] = { resolve, reject };
-      this.send(RPC_CHANNEL, { type: 'call', id, topic, payload });
+      this.send(this.channel, { type: 'call', id, topic, payload });
     });
   }
   define(topic, func) {
@@ -78,12 +80,12 @@ class RpcChannel {
 }
 
 module.exports = {
-  create: (send, listen) => {
-    return new RpcChannel(send, listen);
+  create: (channel, send, listen) => {
+    return new RpcChannel(channel, send, listen);
   },
-  createWithIpcRenderer: (ipc) => {
-    return new RpcChannel(ipc.send.bind(ipc), (channel, listener) => {
-      ipc.on(channel, (evt, msg) => listener(msg));
+  createWithIpcRenderer: (channel, ipc) => {
+    return new RpcChannel(channel, ipc.send.bind(ipc), (ipcChannel, listener) => {
+      ipc.on(ipcChannel, (evt, msg) => listener(msg));
     });
   }
 };

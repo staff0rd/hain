@@ -15,7 +15,7 @@ const remote = require('electron').remote;
 const ipc = require('electron').ipcRenderer;
 
 const RpcChannel = require('../main/shared/rpc-channel');
-const rpc = RpcChannel.createWithIpcRenderer(ipc);
+const rpc = RpcChannel.createWithIpcRenderer('#mainWindow', ipc);
 
 const textUtil = require('../main/shared/text-util');
 
