@@ -362,14 +362,17 @@ class AppContainer extends React.Component {
     const selectedResult = results[selectionIndex];
 
     const list = [];
+    const tabIndicator = '<kbd style=\'font-size: 7pt; margin-left: 5px; opacity: 0.8\'>tab</kbd>';
     let lastGroup = null;
     for (let i = 0; i < results.length; ++i) {
       const result = results[i];
       const avatar = this.parseIconUrl(result.icon);
       const rightIcon = this.displayRightButton(i);
 
-      const title = textUtil.extractText(result.title);
+      let title = textUtil.extractText(result.title);
       const titleStyle = textUtil.extractTextStyle(result.title);
+      if (result.redirect)
+        title += tabIndicator;
 
       const desc = textUtil.extractText(result.desc);
       const descStyle = textUtil.extractTextStyle(result.desc, { fontSize: 13 });
