@@ -20,8 +20,9 @@ module.exports = class AppService {
   constructor(prefManager, workerClient, workerProxy) {
     this._isRestarting = false;
 
-    this.workerClient = workerClient;
     this.prefManager = prefManager;
+    this.workerClient = workerClient;
+    this.workerProxy = workerProxy;
 
     this.autoLaunch = new AutoLaunch();
     this.mainWindow = new MainWindow(workerProxy);
