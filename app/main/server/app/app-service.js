@@ -85,10 +85,10 @@ module.exports = class AppService {
       argv[0] = `"${argv[0]}"`;
 
     cp.exec(argv.join(' '));
-    setTimeout(() => electronApp.quit(), 500);
+    setTimeout(() => this.quit(), 500);
   }
   quit() {
-    electronApp.quit();
+    electronApp.exit(0);
   }
   openPreferences(prefId) {
     this.prefWindow.show(prefId);
