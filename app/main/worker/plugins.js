@@ -318,11 +318,7 @@ module.exports = (workerContext) => {
 
   function getPreferences(prefId) {
     const prefObj = prefObjs[prefId];
-    return {
-      prefId,
-      schema: JSON.stringify(prefObj.schema),
-      model: prefObj.get()
-    };
+    return prefObj.toPrefFormat();
   }
 
   function updatePreferences(prefId, prefModel) {

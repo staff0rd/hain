@@ -15,10 +15,8 @@ module.exports = class AutoLaunch {
   loadPreviousSetings() {
     return new Promise((resolve, reject) => {
       regKey.get(VALUE_NAME, (err, item) => {
-        if (err) {
-          console.log(err);
+        if (err)
           return reject(err);
-        }
         this.isActivated = (item !== null);
         resolve();
       });

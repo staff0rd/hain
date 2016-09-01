@@ -17,16 +17,17 @@ const ShortcutService = require('./shortcut-service');
 const iconProtocol = require('./icon-protocol');
 
 module.exports = class AppService {
-  constructor(appPref, workerClient, workerProxy) {
+  constructor(prefManager, workerClient, workerProxy) {
     this._isRestarting = false;
 
-    this.appPref = appPref;
+    this.workerClient = workerClient;
+    this.prefManager = prefManager;
+
     this.autoLaunch = new AutoLaunch();
     this.mainWindow = new MainWindow(workerProxy);
-    this.prefWindow = new PrefWindow(workerProxy);
+    this.prefWindow = new PrefWindow(prefManager);
     this.trayService = new TrayService(this, this.autoLaunch);
-    this.shortcutService = new ShortcutService(this, appPref);
-    this.workerClient = workerClient;
+    this.shortcutService = new ShortcutService(this, prefManager.appPref);
   }
   initializeAndLaunch() {
     const self = this;
@@ -89,7 +90,7 @@ module.exports = class AppService {
   }
   reloadPlugins() {
     this.workerClient.reloadWorker();
-    this.workerProxy.initialize(this.appPref.get());
+    this.workerProxy.initialize(this.prefManager.appPref.get());
     this.mainWindow.setQuery('');
     this.mainWindow.notifyPluginsReloading();
   }

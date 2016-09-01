@@ -87,7 +87,9 @@ class Preferences extends React.Component {
     this.selectPref(value);
   }
   handleResetAll(evt) {
-    rpc.call('resetPreferences', { prefId: this.state.selectedPrefId });
+    const prefId = this.state.selectedPrefId;
+    rpc.call('resetPreferences', { prefId })
+      .then(() => this.selectPref(prefId));
   }
   render() {
     const listItems = [];

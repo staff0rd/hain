@@ -52,6 +52,13 @@ class PreferencesObject extends EventEmitter {
     this.model = model;
     this._isDirty = true;
   }
+  toPrefFormat() {
+    return {
+      id: this.id,
+      schema: JSON.stringify(this.schema),
+      model: this.model
+    };
+  }
   commit() {
     if (this._isDirty === false)
       return;

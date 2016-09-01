@@ -9,27 +9,27 @@ const RpcChannel = require('../../../shared/rpc-channel');
 const ipc = electron.ipcMain;
 
 module.exports = class PrefWindow {
-  constructor(workerProxy) {
+  constructor(prefManager) {
     this.browserWindow = null;
-    this.workerProxy = workerProxy;
+    this.prefManager = prefManager;
     this.rpc = RpcChannel.create('#prefWindow', this._send.bind(this), this._on.bind(this));
     this._setupHandlers();
   }
   _setupHandlers() {
     this.rpc.define('getPrefItems', () => {
-      return this.workerProxy.getPluginPrefIds();
+      return this.prefManager.getPrefItems();
     });
     this.rpc.define('getPreferences', (payload) => {
       const { prefId } = payload;
-      return this.workerProxy.getPreferences(prefId);
+      return this.prefManager.getPreferences(prefId);
     });
     this.rpc.define('updatePreferences', (payload) => {
       const { prefId, model } = payload;
-      this.workerProxy.updatePreferences(prefId, model);
+      this.prefManager.updatePreferences(prefId, model);
     });
     this.rpc.define('resetPreferences', (payload) => {
       const { prefId } = payload;
-      return this.workerProxy.resetPreferences(prefId);
+      return this.prefManager.resetPreferences(prefId);
     });
   }
   show(prefId) {
@@ -48,8 +48,8 @@ module.exports = class PrefWindow {
     });
     this.browserWindow.loadURL(url);
     this.browserWindow.on('close', () => {
+      this.prefManager.commitPreferences();
       this.browserWindow = null;
-      this.workerProxy.commitPreferences();
     });
 
     this.browserWindow.webContents.on('will-navigate', (evt, _url) => {
