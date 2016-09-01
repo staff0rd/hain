@@ -36,8 +36,11 @@ module.exports = class WorkerClient extends EventEmitter {
       execArgv: ['--always-compact'],
       silent: true
     });
+
+    // Workaround for Electron 1.3.4's strange stdio redirection
     this.workerProcess.stdout.on('data', process.stdout.write);
     this.workerProcess.stderr.on('data', process.stdout.write);
+
     this.workerProcess.on('message', (msg) => this._handleWorkerMessage(msg));
   }
   send(channel, payload) {
