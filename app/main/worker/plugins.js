@@ -13,9 +13,9 @@ const co = require('co');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
-const fileutil = require('../shared/fileutil');
+const fileUtil = require('../shared/file-util');
 
-const matchutil = require('../shared/matchutil');
+const matchUtil = require('../shared/match-util');
 const textUtil = require('../shared/text-util');
 const logger = require('../shared/logger');
 const iconFmt = require('./icon-fmt');
@@ -95,12 +95,12 @@ function _makeIntroHelp(pluginConfig) {
 function _makePrefixHelp(pluginConfig, query) {
   if (!pluginConfig.prefix) return;
   const candidates = [pluginConfig.prefix];
-  const filtered = matchutil.head(candidates, query);
+  const filtered = matchUtil.head(candidates, query);
   return filtered.map((x) => {
     return {
       redirect: pluginConfig.redirect,
       payload: pluginConfig.redirect,
-      title: textUtil.sanitize(matchutil.makeStringBoldHtml(x.elem, x.matches)),
+      title: textUtil.sanitize(matchUtil.makeStringBoldHtml(x.elem, x.matches)),
       desc: textUtil.sanitize(pluginConfig.name),
       group: 'Plugin Commands',
       icon: pluginConfig.icon,
@@ -132,9 +132,11 @@ module.exports = (workerContext) => {
     toast: workerContext.toast,
     shell: workerContext.shell,
     logger: workerContext.logger,
-    matchutil,
+    matchUtil,
     // Preferences
-    globalPreferences: workerContext.globalPreferences
+    globalPreferences: workerContext.globalPreferences,
+    // Deprecated
+    matchutil: matchUtil
   };
 
   function generatePluginContext(pluginId, pluginConfig) {
@@ -205,7 +207,7 @@ module.exports = (workerContext) => {
       for (const packageName of packageDirs) {
         const srcPath = path.join(preinstallDir, packageName);
         const destPath = path.join(repoDir, packageName);
-        yield fileutil.move(srcPath, destPath);
+        yield fileUtil.move(srcPath, destPath);
         logger.debug(`${packageName} has installed successfully`);
       }
     }).catch((err) => {
