@@ -7,7 +7,6 @@ const cp = require('child_process');
 const electron = require('electron');
 const electronApp = electron.app;
 
-const AutoLaunch = require('./auto-launch');
 const MainWindow = require('./ui/main-window');
 const PrefWindow = require('./ui/pref-window');
 const TrayService = require('./ui/tray-service');
@@ -15,6 +14,13 @@ const TrayService = require('./ui/tray-service');
 const firstLaunch = require('./first-launch');
 const ShortcutService = require('./shortcut-service');
 const iconProtocol = require('./icon-protocol');
+
+const AutoLaunch = require('auto-launch');
+const autoLauncher = new AutoLaunch({
+  name: 'Hain',
+  path: `"${process.execPath}" --silent`
+});
+
 
 module.exports = class AppService {
   constructor(prefManager, workerClient, workerProxy) {
@@ -24,17 +30,16 @@ module.exports = class AppService {
     this.workerClient = workerClient;
     this.workerProxy = workerProxy;
 
-    this.autoLaunch = new AutoLaunch();
     this.mainWindow = new MainWindow(workerProxy);
     this.prefWindow = new PrefWindow(prefManager);
-    this.trayService = new TrayService(this, this.autoLaunch);
+    this.trayService = new TrayService(this, autoLauncher);
     this.shortcutService = new ShortcutService(this, prefManager.appPref);
   }
   initializeAndLaunch() {
     const self = this;
     return co(function* () {
       if (firstLaunch.isFirstLaunch)
-        self.autoLaunch.activate();
+        autoLauncher.enable();
 
       const isRestarted = (lo_includes(process.argv, '--restarted'));
       const silentLaunch = (lo_includes(process.argv, '--silent'));
@@ -56,7 +61,6 @@ module.exports = class AppService {
             self.mainWindow.enqueueToast('Restarted');
         });
 
-        self.autoLaunch.loadPreviousSetings();
         self.trayService.createTray();
         iconProtocol.register();
       });
