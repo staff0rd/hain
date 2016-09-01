@@ -78,7 +78,7 @@ class AppContainer extends React.Component {
     this.refs.query.focus();
     rpc.define('notifyPluginsLoaded', (payload) => {
       this.isLoaded = true;
-      this.setQuery('', true);
+      this.setQuery('');
     });
     rpc.define('notifyPluginsReloading', (payload) => {
       this.isLoaded = false;
