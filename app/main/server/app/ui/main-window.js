@@ -85,7 +85,7 @@ module.exports = class MainWindow {
   hide(dontRestoreFocus) {
     if (this.browserWindow === null)
       return;
-    this.browserWindow.minimize();
+    this.browserWindow.setPosition(0, -1000);
     this.browserWindow.hide();
 
     if (!dontRestoreFocus)
