@@ -149,7 +149,7 @@ module.exports = (context) => {
       const RATIO_DELTA = (RECENT_ITEM_RATIO_HIGH - RECENT_ITEM_RATIO_LOW);
       const scoredRecentFuzzyResults = recentFuzzyResults.map((x) => {
         const nearIdx = _recentUsedItems.indexOf(x.path);
-        const ratio = ((RECENT_ITEM_COUNT - nearIdx) / RECENT_ITEM_COUNT) * RATIO_DELTA + RECENT_ITEM_RATIO_LOW
+        const ratio = ((RECENT_ITEM_COUNT - nearIdx) / RECENT_ITEM_COUNT) * RATIO_DELTA + RECENT_ITEM_RATIO_LOW;
         x.score = x.score * ratio;
         return x;
       });
