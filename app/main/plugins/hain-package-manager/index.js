@@ -152,7 +152,7 @@ module.exports = (context) => {
       const newestPkgNames = newestPackages.map(x => x.name);
       const popularPackages = lo_reject(packages, x => newestPkgNames.indexOf(x.name) >= 0);
 
-      const popularResults = _toSearchResults('install', popularPackages, 'Popular (Monthly)');
+      const popularResults = _toSearchResults('install', popularPackages, 'Popular');
       const newestResults = _toSearchResults('install', newestPackages, 'Newest');
       return newestResults.concat(popularResults);
     }
