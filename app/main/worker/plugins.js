@@ -110,7 +110,7 @@ function _makePrefixHelp(pluginConfig, query) {
 }
 
 module.exports = (workerContext) => {
-  const pluginLoader = require('./plugin-loader')(workerContext);
+  const pluginLoader = require('./plugin-loader')();
 
   let plugins = null;
   let pluginConfigs = null;
@@ -129,6 +129,7 @@ module.exports = (workerContext) => {
     COMPATIBLE_API_VERSIONS: conf.COMPATIBLE_API_VERSIONS,
     // Utilities
     app: workerContext.app,
+    clipboard: workerContext.clipboard,
     toast: workerContext.toast,
     shell: workerContext.shell,
     logger: workerContext.logger,

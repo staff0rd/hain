@@ -19,9 +19,9 @@ module.exports = class WorkerHandler {
   handleOnError(payload) {
     logger.error(`Unhandled Plugin Error: ${payload}`);
   }
-  handleCallApi(__payload) {
-    const { moduleName, funcName, payload } = __payload;
-    this.apiService.callApi(moduleName, funcName, payload);
+  handleCallApi(payload) {
+    const { moduleName, funcName, args } = payload;
+    return this.apiService.callApi(moduleName, funcName, args);
   }
   handleNotifyPluginsLoaded(payload) {
     this.appService.mainWindow.notifyPluginsLoaded();

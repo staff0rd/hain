@@ -10,7 +10,7 @@ const logger = require('../shared/logger');
 const iconFmt = require('./icon-fmt');
 const conf = require('../conf');
 
-module.exports = (workerContext) => {
+module.exports = () => {
   function ensurePluginRepos() {
     for (const repo of conf.PLUGIN_REPOS) {
       fse.ensureDirSync(repo);

@@ -4,8 +4,7 @@ module.exports = class ToastAPI {
   constructor(context) {
     this.appService = context.appService;
   }
-  enqueue(payload) {
-    const { message, duration } = payload;
+  enqueue(message, duration) {
     this.appService.mainWindow.enqueueToast(message, duration);
   }
 };

@@ -29,13 +29,13 @@ module.exports = class ApiService {
       logger.debug(`ApiService: ${moduleFile} loaded`);
     }
   }
-  callApi(moduleName, funcName, payload) {
+  callApi(moduleName, funcName, args) {
     const moduleInstance = this.apiModuleInstances[moduleName];
     if (moduleInstance === undefined)
       return logger.error(`ApiService: Can't find api module: ${moduleName}`);
     const func = moduleInstance[funcName];
     if (func === undefined)
       return logger.error(`ApiService: Can't find api func: ${moduleName}::${funcName}`);
-    func.call(moduleInstance, payload);
+    return func.apply(moduleInstance, args);
   }
 };

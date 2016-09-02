@@ -1,6 +1,7 @@
 'use strict';
 
 const co = require('co');
+const lo_assign = require('lodash.assign');
 const logger = require('../shared/logger');
 const globalProxyAgent = require('./global-proxy-agent');
 const apiProxy = require('./api-proxy');
@@ -11,13 +12,9 @@ const rpc = require('./rpc');
 // Create a local copy of app-pref object
 const appPrefCopy = new PreferencesObject(null, 'hain', {});
 
-const workerContext = {
-  app: apiProxy.appProxy,
-  toast: apiProxy.toastProxy,
-  shell: apiProxy.shellProxy,
-  logger: apiProxy.loggerProxy,
+const workerContext = lo_assign({
   globalPreferences: appPrefCopy
-};
+}, apiProxy);
 
 let plugins = null;
 

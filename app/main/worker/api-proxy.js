@@ -1,46 +1,33 @@
 'use strict';
 
-const logger = require('../shared/logger');
+// This module manages api proxy interface with server apis
+
 const rpc = require('./rpc');
 
-function call(moduleName, funcName, payload) {
-  rpc.call('callApi', { moduleName, funcName, payload });
+function call(moduleName, funcName, args) {
+  return rpc.call('callApi', { moduleName, funcName, args });
 }
 
-function wrapFunc(moduleName) {
-  return (func, args) => call(moduleName, func, args);
-}
-
-const app_func = wrapFunc('app');
-const appProxy = {
-  restart: () => app_func('restart'),
-  quit: () => app_func('quit'),
-  open: (query) => app_func('open', query),
-  close: (dontRestoreFocus) => app_func('close', dontRestoreFocus),
-  setInput: (text) => app_func('setQuery', text), // Deprecated
-  setQuery: (query) => app_func('setQuery', query),
-  openPreferences: (prefId) => app_func('openPreferences', prefId),
-  reloadPlugins: () => app_func('reloadPlugins')
-};
-
-const toast_func = wrapFunc('toast');
-const toastProxy = {
-  enqueue: (message, duration) => toast_func('enqueue', { message, duration })
-};
-
-const shell_func = wrapFunc('shell');
-const shellProxy = {
-  showItemInFolder: (fullPath) => shell_func('showItemInFolder', fullPath),
-  openItem: (fullPath) => shell_func('openItem', fullPath),
-  openExternal: (fullPath) => shell_func('openExternal', fullPath)
-};
-
-const logger_func = wrapFunc('logger');
-const loggerProxy = {
-  log: (msg) => {
-    logger.debug(msg);
-    logger_func('log', msg);
+function makeProxy(moduleName, functions) {
+  const proxy = {};
+  for (const func of functions) {
+    proxy[func] = (...args) => {
+      return call(moduleName, func, args);
+    };
   }
-};
+  return proxy;
+}
 
-module.exports = { appProxy, toastProxy, shellProxy, loggerProxy };
+const app = makeProxy('app', ['restart', 'quit', 'open', 'close', 'setInput', 'setQuery', 'openPreferences', 'reloadPlugins']);
+const clipboard = makeProxy('clipboard', ['readText', 'writeText', 'readHTML', 'writeHTML', 'clear']);
+const toast = makeProxy('toast', ['enqueue']);
+const shell = makeProxy('shell', ['showItemInFolder', 'openItem', 'openExternal']);
+const logger = makeProxy('logger', ['log']);
+
+module.exports = {
+  app,
+  clipboard,
+  toast,
+  shell,
+  logger
+};
