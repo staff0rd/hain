@@ -467,7 +467,7 @@ class AppContainer extends React.Component {
           </div>
           {previewBox}
         </div>
-        <Notification key="notification" isActive={this.state.toastOpen}
+        <Notification key="notification" isActive={this.state.toastOpen} barStyle={{ maxWidth: '600px', wordWrap: 'break-word' }}
                       message={<div dangerouslySetInnerHTML={{ __html: this.state.toastMessage }} />} />
       </div>
       </MuiThemeProvider>
