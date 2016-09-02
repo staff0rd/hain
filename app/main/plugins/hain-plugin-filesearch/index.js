@@ -172,8 +172,8 @@ module.exports = (context) => {
       return;
     }
 
-    shell.openItem(id);
     app.close();
+    shell.openItem(id);
   }
 
   return { startup, search, execute };
