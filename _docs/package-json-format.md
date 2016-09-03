@@ -10,7 +10,7 @@ All plugin configurations must be located in package.json
 * `hain` Object - (**required**)
   - `prefix` String - Plugin command prefix, e.g. '/g' (optional)
   - `usage` String - Plugin usage to be displayed in the empty ResultList. e.g. 'type /g' (optional, default is `prefix` value)
-  - `icon` String - Icon URL, see [Icon URL Format](/docs/icon-url-format/) (**required**)
+  - `icon` String - Icon URL, see [Icon URL Format]({{ site.baseurl }}/docs/icon-url-format/) (**required**)
   - `redirect` String - Query to redirect user input when user did select intro help (optional)
   - `group` String - Default result group name (optional, default is `name` value)
 
