@@ -1,0 +1,53 @@
+# main links links
+main:
+  - title: "Plugin Documentation"
+    url: /docs/
+
+  - title: "View on Github"
+    url: https://github.com/appetizermonster/hain
+
+docs:
+  - title: Plugin Documentation
+    url: /docs/
+
+  - title: Guides
+    children:
+      - title: "Plugin Skeleton"
+        url: /docs/plugin-skeleton/
+      - title: "Plugin Directories"
+        url: /docs/plugin-directories/
+      - title: "package.json Format"
+        url: /docs/package-json-format/
+      - title: "preferences.json Format"
+        url: /docs/preferences-json-format/
+      - title: "Icon URL Format"
+        url: /docs/icon-url-format/
+      - title: "Text Format"
+        url: /docs/text-format/
+      - title: "Share your plugins"
+        url: /docs/share-your-plugins/
+      - title: "Limitations"
+        url: /docs/limitations/
+
+  - title: API Reference
+    children:
+      # PluginContext
+      - title: "PluginContext"
+        url: /docs/plugin-context/
+      - title: "PluginContext.App"
+        url: /docs/plugin-context-app/
+      - title: "PluginContext.Clipboard"
+        url: /docs/plugin-context-clipboard/
+      - title: "PluginContext.Toast"
+        url: /docs/plugin-context-toast/
+      - title: "PluginContext.Shell"
+        url: /docs/plugin-context-shell/
+      - title: "PluginContext.Logger"
+        url: /docs/plugin-context-logger/
+      # ...
+      - title: SearchResult
+        url: /docs/search-result/
+      - title: ResponseObject
+        url: /docs/response-object/
+      - title: PreferencesObject
+        url: /docs/preferences-object/
