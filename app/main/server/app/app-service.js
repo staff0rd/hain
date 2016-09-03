@@ -18,9 +18,10 @@ const iconProtocol = require('./icon-protocol');
 const AutoLaunch = require('auto-launch');
 const autoLauncher = new AutoLaunch({
   name: 'Hain',
-  path: `"${process.execPath}" --silent`
+  isHidden: true
 });
-
+// Workaround for keeping registry key name
+autoLauncher.opts.appName = 'Hain';
 
 module.exports = class AppService {
   constructor(prefManager, workerClient, workerProxy) {
@@ -42,7 +43,7 @@ module.exports = class AppService {
         autoLauncher.enable();
 
       const isRestarted = (lo_includes(process.argv, '--restarted'));
-      const silentLaunch = (lo_includes(process.argv, '--silent'));
+      const silentLaunch = (lo_includes(process.argv, '--hidden') || lo_includes(process.argv, '--silent'));
       const shouldQuit = electronApp.makeSingleInstance((cmdLine, workingDir) => {
         if (self._isRestarting)
           return;
