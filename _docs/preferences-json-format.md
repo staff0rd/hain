@@ -13,7 +13,7 @@ See <http://json-schema.org/> for JSONSchema
 
 You can make your plugin preferences like:
 <p align="center">
-  <img src="{{ site.url }}/images/pref-sample1.png" />
+  <img src="{{ site.url }}/hain/images/pref-sample1.png" />
 </p>
 
 by following JSONSchema:
