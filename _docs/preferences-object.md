@@ -5,12 +5,12 @@ permalink: /docs/preferences-object/
 
 ## Methods
 
-### get(path)
+### preferences.get(path)
   - `path` String - (optional)
 
   Returns raw preferences object if path is `undefined`, otherwise it returns the value at path of object, See `path` rules at <https://lodash.com/docs#get>
 
-### on(eventName, listener)
+### preferences.on(eventName, listener)
   - `eventName` String - (**required**)
   - `listener` String - (**required**)
   

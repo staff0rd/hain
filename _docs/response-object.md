@@ -5,15 +5,15 @@ title: "ResponseObject"
 
 ## Methods
 
-### add(result)  
+### res.add(result)  
   - `result` SearchResult  
   
-### add(results)  
+### res.add(results)  
   - `results` Array\<SearchResult\>  
 
   You can add your SearchResult to ResultList in the app by calling this function
   
-### remove(id)  
+### res.remove(id)  
   - `id` Any - identifier of a SearchResult to be removed  
 
   You can remove a SearchResult that you did add using the identifier.
