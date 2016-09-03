@@ -14,6 +14,7 @@ const TrayService = require('./ui/tray-service');
 const firstLaunch = require('./first-launch');
 const ShortcutService = require('./shortcut-service');
 const iconProtocol = require('./icon-protocol');
+const logger = require('../../shared/logger');
 
 const AutoLaunch = require('auto-launch');
 const autoLauncher = new AutoLaunch({
@@ -66,7 +67,7 @@ module.exports = class AppService {
         iconProtocol.register();
       });
     }).catch((err) => {
-      console.log(err);
+      logger.error(err);
     });
   }
   open(query) {
