@@ -6,7 +6,7 @@ You can show notifications to user by using Toast.
 
 ## Methods
 
-### enqueue(message, duration)  
+### toast.enqueue(message, duration)  
   - `message` String - notification message (**required**)
   - `duration` Number - notification duration in milliseconds (optional, default is `2000`)
 
