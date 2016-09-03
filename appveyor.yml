@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - develop
 
 environment:
   nodejs_version: "6.5.0"
