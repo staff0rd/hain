@@ -3,7 +3,7 @@ branches:
     - master
 
 environment:
-  nodejs_version: "5.5.0"
+  nodejs_version: "6.5.0"
   nodejs_arch: "x64"
 
 install:
