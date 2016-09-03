@@ -14,8 +14,8 @@ SearchResult is a plain object format which has a following properties:
 * `preview` Boolean - whether it has HTML Preview (optional, default is `false`)
 
   
-SearchResult object is used as a argument for [ResponseObject]({{ site.baseurl }}/docs/response-object/) object.  
-You can send SearchResult using Response object,
+SearchResult object is used as a argument for [ResponseObject]({{ site.baseurl }}/docs/response-object/).  
+You can send SearchResult using [ResponseObject]({{ site.baseurl }}/docs/response-object/).
 
 ## Example
 

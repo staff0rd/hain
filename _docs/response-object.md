@@ -6,17 +6,17 @@ title: "ResponseObject"
 ## Methods
 
 ### res.add(result)  
-  - `result` SearchResult  
+  - `result` [SearchResult]({{ site.baseurl }}/docs/search-result/)  
   
 ### res.add(results)  
-  - `results` Array\<SearchResult\>  
+  - `results` Array\<[SearchResult]({{ site.baseurl }}/docs/search-result/)\>  
 
-  You can add your SearchResult to ResultList in the app by calling this function
+  You can add your [SearchResult]({{ site.baseurl }}/docs/search-result/) to ResultList in the app by calling this function
   
 ### res.remove(id)  
-  - `id` Any - identifier of a SearchResult to be removed  
+  - `id` Any - identifier of a [SearchResult]({{ site.baseurl }}/docs/search-result/) to be removed  
 
-  You can remove a SearchResult that you did add using the identifier.
+  You can remove a [SearchResult]({{ site.baseurl }}/docs/search-result/) that you did add using the identifier.
     
 
 You can use it for sending(adding) or removing SearchResults.

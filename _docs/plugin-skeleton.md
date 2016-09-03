@@ -54,7 +54,7 @@ you can do any preparations here.
   - `id` Any - id of the selected [SearchResult]({{ site.baseurl }}/docs/search-result/)
   - `payload` Any - payload of the selected [SearchResult]({{ site.baseurl }}/docs/search-result/)  
 
-  This function will be invoked when user selected a SearchResult you send in the **search** function.
+  This function will be invoked when user selected a [SearchResult]({{ site.baseurl }}/docs/search-result/) you send in the **search** function.
 
 * **renderPreview(id, payload, render)** (optional)  
   - `id` Any - id of the selected [SearchResult]({{ site.baseurl }}/docs/search-result/)
