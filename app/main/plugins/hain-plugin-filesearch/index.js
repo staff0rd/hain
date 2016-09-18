@@ -140,7 +140,7 @@ module.exports = (context) => {
 
   function search(query, res) {
     const query_trim = query.replace(' ', '');
-    const recentFuzzyResults = util.fuzzy(_recentUsedItems, query_trim);
+    const recentFuzzyResults = util.fuzzy(_recentUsedItems, query_trim).slice(0, 2);
     const defaultFuzzyResults = util.fuzzy(db, query_trim);
 
     let recentSearchResults = [];
