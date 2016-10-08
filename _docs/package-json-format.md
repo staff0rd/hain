@@ -7,6 +7,7 @@ All plugin configurations must be located in package.json
 
 * `name` String - Plugin name, must be prefixed with `hain-plugin-` (**required**)
 * `version` String - Plugin version 'x.y.z' (**required**)
+* `dependencies` Array - If your plugin has external dependencies, include them here. (required if applicable)
 * `hain` Object - (**required**)
   - `prefix` String - Plugin command prefix, e.g. '/g' (optional)
   - `usage` String - Plugin usage to be displayed in the empty ResultList. e.g. 'type /g' (optional, default is `prefix` value)
